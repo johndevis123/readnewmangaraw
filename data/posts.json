@@ -1,6 +1,39 @@
 {
   "posts": [
     {
+      "slug": "第226話",
+      "title": "ウィンドブレイカ Raw ( ＷＩＮＤ　ＢＲＥＡＫＥＲ Raw ) 第226話",
+      "manga": "ＷＩＮＤ　ＢＲＥＡＫＥＲ",
+      "chapter": "第226話",
+      "genre": "Action",
+      "rating": "7.0",
+      "views": "0",
+      "cover": "images/第226話/cover.webp",
+      "images": [
+        "images/第226話/page-01.jpg",
+        "images/第226話/page-02.jpg",
+        "images/第226話/page-03.jpg",
+        "images/第226話/page-04.jpg",
+        "images/第226話/page-05.jpg",
+        "images/第226話/page-06.jpg",
+        "images/第226話/page-07.jpg",
+        "images/第226話/page-08.jpg",
+        "images/第226話/page-09.jpg",
+        "images/第226話/page-10.jpg",
+        "images/第226話/page-11.jpg",
+        "images/第226話/page-12.jpg",
+        "images/第226話/page-13.jpg",
+        "images/第226話/page-14.jpg",
+        "images/第226話/page-15.jpg",
+        "images/第226話/page-16.jpg",
+        "images/第226話/page-17.jpg",
+        "images/第226話/page-18.jpg",
+        "images/第226話/page-19.jpg",
+        "images/第226話/page-20.jpg",
+        "images/第226話/page-21.jpg"
+      ]
+    },
+    {
       "slug": "sakamoto-days-第272話",
       "title": "サカモトデイズ Raw ( SAKAMOTO DAYS Raw ) 第272話",
       "manga": "SAKAMOTO DAYS",
