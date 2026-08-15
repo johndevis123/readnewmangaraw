@@ -1,6 +1,19 @@
 {
   "posts": [
     {
+      "slug": "sakamoto-days-第272話",
+      "title": "サカモトデイズ Raw ( SAKAMOTO DAYS Raw ) 第272話",
+      "manga": "SAKAMOTO DAYS",
+      "chapter": "第272話",
+      "genre": "Action",
+      "rating": "9.0",
+      "views": "0",
+      "cover": "images/sakamoto-days-第272話/cover.jpg",
+      "images": [
+        "images/sakamoto-days-第272話/page-01.webp"
+      ]
+    },
+    {
       "slug": "one-piece-第1191話",
       "title": "ワンピース Raw ( One Piece Raw ) 第1191話",
       "manga": "One Piece",
