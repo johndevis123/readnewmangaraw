@@ -25,7 +25,7 @@ jobs:
           import json
           from urllib.parse import quote
 
-          DOMAIN = "https://readnewmangaraw.com"
+          DOMAIN = "https://readnewmangaraw.github.io"
 
           with open("data/posts.json", "r", encoding="utf-8") as f:
               data = json.load(f)
