@@ -1,6 +1,19 @@
 {
   "posts": [
     {
+      "slug": "kagurabachi-第129話",
+      "title": "カグラバチ Raw ( Kagurabachi Raw ) 第129話",
+      "manga": "Kagurabachi",
+      "chapter": "第129話",
+      "genre": "Fantasy",
+      "rating": "7.0",
+      "views": "0",
+      "cover": "images/kagurabachi-第129話/cover.webp",
+      "images": [
+        "images/kagurabachi-第129話/page-01.webp"
+      ]
+    },
+    {
       "slug": "第226話",
       "title": "ウィンドブレイカ Raw ( ＷＩＮＤ　ＢＲＥＡＫＥＲ Raw ) 第226話",
       "manga": "ＷＩＮＤ　ＢＲＥＡＫＥＲ",
