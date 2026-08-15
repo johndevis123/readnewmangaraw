@@ -40,6 +40,17 @@ href="../style.css">
   box-shadow:0 15px 40px rgba(0,0,0,.35);
 }
 
+.login-logo{
+  text-align:center;
+  font-size:22px;
+  font-weight:bold;
+  margin-bottom:10px;
+}
+
+.login-logo span{
+  color:#1491ff;
+}
+
 .login-box h1{
   margin:0 0 8px;
   text-align:center;
@@ -106,20 +117,9 @@ href="../style.css">
   line-height:1.5;
 }
 
-.login-logo{
-  text-align:center;
-  font-size:22px;
-  font-weight:bold;
-  margin-bottom:10px;
-}
-
-.login-logo span{
-  color:#1491ff;
-}
-
 
 /* =========================
-   ADMIN CMS
+   ADMIN PANEL
 ========================= */
 
 #adminPanel{
@@ -232,25 +232,10 @@ href="../style.css">
   background:#8f1b1b;
 }
 
-.admin-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:10px;
-}
-
 @media(max-width:600px){
 
   .row{
     grid-template-columns:1fr;
-  }
-
-  .admin-header{
-    align-items:flex-start;
-  }
-
-  .logout-btn{
-    float:none;
   }
 
 }
@@ -378,16 +363,10 @@ Logout
 <div class="admin">
 
 
-<!-- POST FORM -->
-
 <div class="box">
 
 
-<div class="admin-header">
-
 <h1>📝 Manga Post / Update</h1>
-
-</div>
 
 
 <div class="info">
@@ -404,10 +383,7 @@ ALT text is generated automatically.
 
 
 
-<!-- MANGA TITLE + CHAPTER -->
-
 <div class="row">
-
 
 <div class="field">
 
@@ -420,7 +396,6 @@ placeholder="One Piece">
 </div>
 
 
-
 <div class="field">
 
 <label>Chapter Number</label>
@@ -431,12 +406,9 @@ placeholder="第1191話">
 
 </div>
 
-
 </div>
 
 
-
-<!-- POST TITLE -->
 
 <div class="field">
 
@@ -449,8 +421,6 @@ placeholder="One Piece Raw 第1191話">
 </div>
 
 
-
-<!-- TITLE / COVER IMAGE -->
 
 <div class="field">
 
@@ -478,10 +448,7 @@ alt="Cover Preview">
 
 
 
-<!-- GENRE + RATING -->
-
 <div class="row">
-
 
 <div class="field">
 
@@ -490,19 +457,14 @@ alt="Cover Preview">
 <select id="genre">
 
 <option>Action</option>
-
 <option>Fantasy</option>
-
 <option>Romance</option>
-
 <option>Sports</option>
-
 <option>Drama</option>
 
 </select>
 
 </div>
-
 
 
 <div class="field">
@@ -515,12 +477,9 @@ value="9.0">
 
 </div>
 
-
 </div>
 
 
-
-<!-- CHAPTER IMAGES -->
 
 <div class="field">
 
@@ -544,10 +503,7 @@ Select chapter images
 
 
 
-<!-- MODE -->
-
 <div class="row">
-
 
 <div class="field">
 
@@ -568,7 +524,6 @@ Update Existing Post
 </div>
 
 
-
 <div class="field">
 
 <label>
@@ -581,12 +536,9 @@ placeholder="one-piece-1191">
 
 </div>
 
-
 </div>
 
 
-
-<!-- BUTTON -->
 
 <button
 class="btn"
@@ -602,15 +554,11 @@ type="button">
 
 
 
-<!-- RESULT -->
-
 <div class="box">
-
 
 <h2>
 Generated Result
 </h2>
-
 
 <div
 id="out"
@@ -620,37 +568,28 @@ Nothing generated yet.
 
 </div>
 
-
 </div>
 
 
 </div>
 
-
 </div>
-
-
-
-<!-- =========================================
-     PUBLISHER
-========================================= -->
-
-<script src="publisher.js"></script>
 
 
 
 <script>
 
 /* =========================================
-   LOGIN CONFIGURATION
+   LOGIN SETTINGS
 ========================================= */
 
 const ADMIN_USERNAME = "readmanga";
+
 const ADMIN_PASSWORD = "read@123";
 
 
 /* =========================================
-   LOGIN ELEMENTS
+   ELEMENTS
 ========================================= */
 
 const loginScreen =
@@ -676,27 +615,84 @@ document.getElementById("logoutBtn");
 
 
 /* =========================================
-   CHECK LOGIN
+   PUBLISHER LOADER
 ========================================= */
 
-function checkLogin(){
+let publisherLoaded = false;
 
-  const loggedIn =
-    sessionStorage.getItem("readNewMangaRawAdmin");
 
-  if(loggedIn === "true"){
+function loadPublisher(){
 
-    loginScreen.style.display = "none";
-
-    adminPanel.style.display = "block";
-
-  }else{
-
-    loginScreen.style.display = "flex";
-
-    adminPanel.style.display = "none";
-
+  if(publisherLoaded){
+    return;
   }
+
+  publisherLoaded = true;
+
+  const script =
+    document.createElement("script");
+
+  script.src = "publisher.js";
+
+  script.onload = function(){
+
+    console.log(
+      "Publisher loaded successfully."
+    );
+
+  };
+
+  script.onerror = function(){
+
+    console.error(
+      "Could not load publisher.js"
+    );
+
+    const out =
+      document.getElementById("out");
+
+    if(out){
+
+      out.textContent =
+        "Error: publisher.js could not be loaded.";
+
+    }
+
+  };
+
+  document.body.appendChild(script);
+
+}
+
+
+/* =========================================
+   SHOW ADMIN
+========================================= */
+
+function showAdmin(){
+
+  loginScreen.style.display =
+    "none";
+
+  adminPanel.style.display =
+    "block";
+
+  loadPublisher();
+
+}
+
+
+/* =========================================
+   SHOW LOGIN
+========================================= */
+
+function showLogin(){
+
+  loginScreen.style.display =
+    "flex";
+
+  adminPanel.style.display =
+    "none";
 
 }
 
@@ -707,9 +703,9 @@ function checkLogin(){
 
 loginForm.addEventListener(
 "submit",
-function(e){
+function(event){
 
-  e.preventDefault();
+  event.preventDefault();
 
 
   const username =
@@ -739,14 +735,13 @@ function(e){
     loginPassword.value = "";
 
 
-    checkLogin();
+    showAdmin();
 
 
   }else{
 
     loginError.style.display =
       "block";
-
 
     loginPassword.value = "";
 
@@ -769,13 +764,13 @@ function(){
     "readNewMangaRawAdmin"
   );
 
-  checkLogin();
+  location.reload();
 
 });
 
 
 /* =========================================
-   COVER IMAGE PREVIEW
+   COVER PREVIEW
 ========================================= */
 
 const coverInput =
@@ -818,10 +813,10 @@ function(){
 
 
   reader.onload =
-  function(e){
+  function(event){
 
     coverPreview.src =
-      e.target.result;
+      event.target.result;
 
     coverPreview.style.display =
       "block";
@@ -835,10 +830,22 @@ function(){
 
 
 /* =========================================
-   INITIAL CHECK
+   CHECK SESSION
 ========================================= */
 
-checkLogin();
+if(
+  sessionStorage.getItem(
+    "readNewMangaRawAdmin"
+  ) === "true"
+){
+
+  showAdmin();
+
+}else{
+
+  showLogin();
+
+}
 
 </script>
 
