@@ -1,5 +1,5 @@
 let files = [];
-let coverFile = null;
+let publisherCoverFile = null;
 
 const $ = id => document.getElementById(id);
 
@@ -13,11 +13,11 @@ const WORKER_URL =
 
 $("cover").onchange = e => {
 
-  coverFile = e.target.files[0] || null;
+  publisherCoverFile = e.target.files[0] || null;
 
   $("coverFile").textContent =
-    coverFile
-      ? `Cover: ${coverFile.name}`
+    publisherCoverFile
+      ? `Cover: ${publisherCoverFile.name}`
       : "Select one cover image";
 };
 
@@ -75,7 +75,7 @@ $("go").onclick = async () => {
   if (
     !manga ||
     !chapter ||
-    !coverFile ||
+    !publisherCoverFile ||
     !files.length
   ) {
 
@@ -149,8 +149,8 @@ $("go").onclick = async () => {
 
     formData.append(
       "cover",
-      coverFile,
-      coverFile.name
+      publisherCoverFile,
+      publisherCoverFile.name
     );
 
 
