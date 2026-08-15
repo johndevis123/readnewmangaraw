@@ -1,5 +1,455 @@
-<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ReadNewMangaRaw CMS</title><link rel="stylesheet" href="../style.css"><style>.admin{max-width:900px;margin:30px auto;padding:0 18px}.box{background:#071321;border:1px solid #193650;border-radius:13px;padding:22px;margin-bottom:18px}.field{margin:14px 0}.field label{display:block;font-size:12px;color:#9bb0c7;margin-bottom:7px}.field input,.field select{width:100%;padding:11px;background:#06111e;border:1px solid #23445f;color:#fff;border-radius:8px}.row{display:grid;grid-template-columns:1fr 1fr;gap:14px}.btn{background:#0b8df5;color:#fff;border:0;border-radius:9px;padding:11px 20px;font-weight:bold;cursor:pointer}.info{background:#08233c;border-left:3px solid #1491ff;padding:12px;font-size:12px;color:#bcd0e5;line-height:1.6}.files{font-size:11px;color:#9eb3c9;line-height:1.8}@media(max-width:600px){.row{grid-template-columns:1fr}}</style></head><body><header><div class="wrap nav"><a class="brand" href="../index.html">◈ ReadNew<span>MangaRaw</span><small>Admin Panel</small></a></div></header><div class="admin"><div class="box"><h1>📝 Manga Post / Update</h1><div class="info">Create a new post or update an existing post. To replace images, select the new image set.</div><div class="row"><div class="field"><label>Manga Title</label><input id="manga" placeholder="One Piece"></div><div class="field"><label>Chapter Number</label><input id="chapter" placeholder="第1191話"></div></div><div class="field"><label>Post Title</label><input id="title" placeholder="One Piece Raw 第1191話"></div><div class="row"><div class="field"><label>Genre</label><select id="genre"><option>Action</option><option>Fantasy</option><option>Romance</option><option>Sports</option><option>Drama</option></select></div><div class="field"><label>Rating</label><input id="rating" value="9.0"></div></div><div class="field"><label>Images</label><input id="images" type="file" accept="image/*" multiple><div id="files" class="files">Imagesを選択してください。</div></div><div class="row">
-<div class="field"><label>Mode</label><select id="mode"><option value="new">New Post</option><option value="update">Update Existing Post</option></select></div>
-<div class="field"><label>Existing post slug (example: one-piece-1191)</label><input id="oldslug" placeholder="one-piece-1191"></div>
+<!doctype html>
+<html lang="ja">
+
+<head>
+
+<meta charset="utf-8">
+
+<meta name="viewport"
+content="width=device-width,initial-scale=1">
+
+<title>ReadNewMangaRaw CMS</title>
+
+<link rel="stylesheet"
+href="../style.css">
+
+<style>
+
+.admin{
+  max-width:900px;
+  margin:30px auto;
+  padding:0 18px;
+}
+
+.box{
+  background:#071321;
+  border:1px solid #193650;
+  border-radius:13px;
+  padding:22px;
+  margin-bottom:18px;
+}
+
+.box h1{
+  margin-top:0;
+}
+
+.field{
+  margin:14px 0;
+}
+
+.field label{
+  display:block;
+  font-size:12px;
+  color:#9bb0c7;
+  margin-bottom:7px;
+}
+
+.field input,
+.field select{
+  width:100%;
+  padding:11px;
+  background:#06111e;
+  border:1px solid #23445f;
+  color:#fff;
+  border-radius:8px;
+  outline:none;
+}
+
+.field input:focus,
+.field select:focus{
+  border-color:#1491ff;
+}
+
+.row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+}
+
+.btn{
+  background:#0b8df5;
+  color:#fff;
+  border:0;
+  border-radius:9px;
+  padding:11px 20px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.btn:hover{
+  background:#0878d1;
+}
+
+.info{
+  background:#08233c;
+  border-left:3px solid #1491ff;
+  padding:12px;
+  font-size:12px;
+  color:#bcd0e5;
+  line-height:1.6;
+}
+
+.files{
+  font-size:11px;
+  color:#9eb3c9;
+  line-height:1.8;
+  margin-top:8px;
+}
+
+.cover-preview{
+  margin-top:12px;
+  max-width:180px;
+  border-radius:8px;
+  border:1px solid #23445f;
+  display:none;
+}
+
+@media(max-width:600px){
+
+  .row{
+    grid-template-columns:1fr;
+  }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+<div class="wrap nav">
+
+<a class="brand"
+href="../index.html">
+
+◈ ReadNew<span>MangaRaw</span>
+
+<small>Admin Panel</small>
+
+</a>
+
 </div>
-<button class="btn" id="go">🚀 Generate / Update Files</button></div><div class="box"><h2>Generated Result</h2><div id="out" class="info">Nothing generated yet.</div></div></div><script src="publisher.js"></script></body></html>
+
+</header>
+
+
+
+<div class="admin">
+
+
+<!-- POST FORM -->
+
+<div class="box">
+
+
+<h1>📝 Manga Post / Update</h1>
+
+
+<div class="info">
+
+Create a new post or update an existing post.
+
+The Title Image is used as the cover image on the homepage.
+
+Chapter images are displayed inside the chapter page.
+
+ALT text is generated automatically.
+
+</div>
+
+
+
+<!-- MANGA TITLE + CHAPTER -->
+
+<div class="row">
+
+
+<div class="field">
+
+<label>Manga Title</label>
+
+<input
+id="manga"
+placeholder="One Piece">
+
+</div>
+
+
+
+<div class="field">
+
+<label>Chapter Number</label>
+
+<input
+id="chapter"
+placeholder="第1191話">
+
+</div>
+
+
+</div>
+
+
+
+<!-- POST TITLE -->
+
+<div class="field">
+
+<label>Post Title</label>
+
+<input
+id="title"
+placeholder="One Piece Raw 第1191話">
+
+</div>
+
+
+
+<!-- TITLE / COVER IMAGE -->
+
+<div class="field">
+
+<label>Title Image / Cover Image</label>
+
+<input
+id="cover"
+type="file"
+accept="image/*">
+
+<div
+id="coverFile"
+class="files">
+
+Select one cover image
+
+</div>
+
+<img
+id="coverPreview"
+class="cover-preview"
+alt="Cover Preview">
+
+</div>
+
+
+
+<!-- GENRE + RATING -->
+
+<div class="row">
+
+
+<div class="field">
+
+<label>Genre</label>
+
+<select id="genre">
+
+<option>Action</option>
+
+<option>Fantasy</option>
+
+<option>Romance</option>
+
+<option>Sports</option>
+
+<option>Drama</option>
+
+</select>
+
+</div>
+
+
+
+<div class="field">
+
+<label>Rating</label>
+
+<input
+id="rating"
+value="9.0">
+
+</div>
+
+
+</div>
+
+
+
+<!-- CHAPTER IMAGES -->
+
+<div class="field">
+
+<label>Chapter Images</label>
+
+<input
+id="images"
+type="file"
+accept="image/*"
+multiple>
+
+<div
+id="files"
+class="files">
+
+Select chapter images
+
+</div>
+
+</div>
+
+
+
+<!-- MODE -->
+
+<div class="row">
+
+
+<div class="field">
+
+<label>Mode</label>
+
+<select id="mode">
+
+<option value="new">
+New Post
+</option>
+
+<option value="update">
+Update Existing Post
+</option>
+
+</select>
+
+</div>
+
+
+
+<div class="field">
+
+<label>
+Existing Post Slug
+</label>
+
+<input
+id="oldslug"
+placeholder="one-piece-1191">
+
+</div>
+
+
+</div>
+
+
+
+<!-- BUTTON -->
+
+<button
+class="btn"
+id="go">
+
+🚀 Generate / Update Files
+
+</button>
+
+
+</div>
+
+
+
+<!-- RESULT -->
+
+<div class="box">
+
+
+<h2>
+Generated Result
+</h2>
+
+
+<div
+id="out"
+class="info">
+
+Nothing generated yet.
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+
+<script src="publisher.js"></script>
+
+
+<script>
+
+/* Cover image preview */
+
+const coverInput =
+document.getElementById("cover");
+
+const coverPreview =
+document.getElementById("coverPreview");
+
+const coverFile =
+document.getElementById("coverFile");
+
+
+coverInput.addEventListener(
+"change",
+function(){
+
+const file =
+this.files[0];
+
+if(!file){
+
+coverPreview.style.display="none";
+
+coverFile.textContent =
+"Select one cover image";
+
+return;
+
+}
+
+
+coverFile.textContent =
+"Cover: " + file.name;
+
+
+const reader =
+new FileReader();
+
+
+reader.onload =
+function(e){
+
+coverPreview.src =
+e.target.result;
+
+coverPreview.style.display =
+"block";
+
+};
+
+
+reader.readAsDataURL(file);
+
+});
+
+</script>
+
+
+</body>
+
+</html>
