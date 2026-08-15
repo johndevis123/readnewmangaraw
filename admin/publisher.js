@@ -6,33 +6,44 @@ const $ = id => document.getElementById(id);
 const WORKER_URL =
   "https://manga-cms-api.ghazaalbaloch2.workers.dev/publish";
 
+
+/* =========================
+   COVER
+========================= */
+
 $("cover").onchange = e => {
 
-  coverFile =
-    e.target.files[0] || null;
+  coverFile = e.target.files[0] || null;
 
-  $("coverFile").innerHTML =
+  $("coverFile").textContent =
     coverFile
       ? `Cover: ${coverFile.name}`
       : "Select one cover image";
 };
 
 
+/* =========================
+   CHAPTER IMAGES
+========================= */
+
 $("images").onchange = e => {
 
-  files =
-    [...e.target.files];
+  files = [...e.target.files];
 
   $("files").innerHTML =
     files.length
       ? files
-          .map((f, i) =>
-            `${i + 1}. ${f.name}`
+          .map((file, index) =>
+            `${index + 1}. ${escapeHTML(file.name)}`
           )
           .join("<br>")
       : "Select images";
 };
 
+
+/* =========================
+   PUBLISH
+========================= */
 
 $("go").onclick = async () => {
 
@@ -59,6 +70,8 @@ $("go").onclick = async () => {
     $("oldslug").value.trim();
 
 
+  /* Validation */
+
   if (
     !manga ||
     !chapter ||
@@ -73,22 +86,21 @@ $("go").onclick = async () => {
   }
 
 
-  const out =
-    $("out");
-
   const button =
     $("go");
 
+  const out =
+    $("out");
 
-  button.disabled =
-    true;
+
+  button.disabled = true;
 
   button.textContent =
     "⏳ Uploading...";
 
 
   out.innerHTML =
-    "Uploading files to GitHub...<br><br>Please wait.";
+    "Uploading to GitHub...<br><br>Please wait.";
 
 
   try {
@@ -133,12 +145,16 @@ $("go").onclick = async () => {
     );
 
 
+    /* Cover */
+
     formData.append(
       "cover",
       coverFile,
       coverFile.name
     );
 
+
+    /* Chapter images */
 
     files.forEach(file => {
 
@@ -151,6 +167,8 @@ $("go").onclick = async () => {
     });
 
 
+    /* Send to Cloudflare */
+
     const response =
       await fetch(
         WORKER_URL,
@@ -161,80 +179,115 @@ $("go").onclick = async () => {
       );
 
 
-    const result =
-      await response.json();
+    const text =
+      await response.text();
 
 
-    if (!response.ok ||
-        !result.success) {
+    let result;
+
+    try {
+
+      result =
+        JSON.parse(text);
+
+    } catch {
 
       throw new Error(
-        result.error ||
-        `Upload failed (${response.status})`
+        `Worker returned invalid response: ${text}`
       );
 
     }
 
 
+    if (
+      !response.ok ||
+      !result.success
+    ) {
+
+      throw new Error(
+        result.error ||
+        `Upload failed. HTTP ${response.status}`
+      );
+
+    }
+
+
+    /* Success */
+
     out.innerHTML = `
 
-<b>✅ Published Successfully!</b>
+      <b>✅ Published Successfully!</b>
 
-<br><br>
+      <br><br>
 
-<b>Slug:</b>
-<code>${escapeHTML(result.slug)}</code>
+      <b>Slug:</b><br>
 
-<br><br>
+      <code>
+      ${escapeHTML(result.slug)}
+      </code>
 
-<b>Chapter HTML:</b>
-<code>${escapeHTML(result.html)}</code>
+      <br><br>
 
-<br><br>
+      <b>Chapter HTML:</b><br>
 
-<b>Cover:</b>
-<code>${escapeHTML(result.cover)}</code>
+      <code>
+      ${escapeHTML(result.html)}
+      </code>
 
-<br><br>
+      <br><br>
 
-<b>Chapter Images:</b>
-<br>
+      <b>Cover:</b><br>
 
-${result.images
-  .map(
-    x =>
-      `<code>${escapeHTML(x)}</code>`
-  )
-  .join("<br>")}
+      <code>
+      ${escapeHTML(result.cover)}
+      </code>
 
-<br><br>
+      <br><br>
 
-GitHub has been updated successfully.
+      <b>Chapter Images:</b>
 
-`;
+      <br>
+
+      ${result.images
+        .map(
+          image =>
+            `<code>${escapeHTML(image)}</code>`
+        )
+        .join("<br>")}
+
+      <br><br>
+
+      <b>GitHub updated successfully.</b>
+
+    `;
+
 
   } catch(error) {
 
-    console.error(error);
+    console.error(
+      "Publisher error:",
+      error
+    );
+
 
     out.innerHTML = `
 
-<b style="color:#ff7777">
-❌ Upload Failed
-</b>
+      <b style="color:#ff7777">
+      ❌ Upload Failed
+      </b>
 
-<br><br>
+      <br><br>
 
-${escapeHTML(
-  error.message ||
-  String(error)
-)}
+      <b>Error:</b>
 
-<br><br>
+      <br>
 
-Please check the Worker and GitHub settings.
+      ${escapeHTML(
+        error.message ||
+        String(error)
+      )}
 
-`;
+    `;
 
   } finally {
 
@@ -249,18 +302,22 @@ Please check the Worker and GitHub settings.
 };
 
 
+/* =========================
+   ESCAPE HTML
+========================= */
+
 function escapeHTML(value) {
 
   return String(value ?? "")
     .replace(
       /[&<>"']/g,
-      m => ({
+      character => ({
         "&": "&amp;",
         "<": "&lt;",
         ">": "&gt;",
         '"': "&quot;",
         "'": "&#039;"
-      }[m])
+      }[character])
     );
 
 }
