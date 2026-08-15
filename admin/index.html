@@ -1,3 +1,4 @@
+```html
 <!doctype html>
 <html lang="ja">
 
@@ -14,6 +15,116 @@ content="width=device-width,initial-scale=1">
 href="../style.css">
 
 <style>
+
+/* =========================
+   LOGIN SCREEN
+========================= */
+
+#loginScreen{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  box-sizing:border-box;
+}
+
+.login-box{
+  width:100%;
+  max-width:400px;
+  background:#071321;
+  border:1px solid #193650;
+  border-radius:13px;
+  padding:28px;
+  box-sizing:border-box;
+  box-shadow:0 15px 40px rgba(0,0,0,.35);
+}
+
+.login-box h1{
+  margin:0 0 8px;
+  text-align:center;
+}
+
+.login-subtitle{
+  text-align:center;
+  color:#9bb0c7;
+  font-size:13px;
+  margin-bottom:24px;
+}
+
+.login-field{
+  margin:15px 0;
+}
+
+.login-field label{
+  display:block;
+  font-size:12px;
+  color:#9bb0c7;
+  margin-bottom:7px;
+}
+
+.login-field input{
+  width:100%;
+  padding:12px;
+  background:#06111e;
+  border:1px solid #23445f;
+  color:#fff;
+  border-radius:8px;
+  outline:none;
+  box-sizing:border-box;
+}
+
+.login-field input:focus{
+  border-color:#1491ff;
+}
+
+.login-btn{
+  width:100%;
+  background:#0b8df5;
+  color:#fff;
+  border:0;
+  border-radius:9px;
+  padding:12px 20px;
+  font-weight:bold;
+  cursor:pointer;
+  margin-top:8px;
+}
+
+.login-btn:hover{
+  background:#0878d1;
+}
+
+.login-error{
+  display:none;
+  background:#3a1010;
+  border-left:3px solid #ff4444;
+  color:#ffb5b5;
+  padding:10px;
+  margin-top:15px;
+  border-radius:5px;
+  font-size:12px;
+  line-height:1.5;
+}
+
+.login-logo{
+  text-align:center;
+  font-size:22px;
+  font-weight:bold;
+  margin-bottom:10px;
+}
+
+.login-logo span{
+  color:#1491ff;
+}
+
+
+/* =========================
+   ADMIN CMS
+========================= */
+
+#adminPanel{
+  display:none;
+}
 
 .admin{
   max-width:900px;
@@ -53,6 +164,7 @@ href="../style.css">
   color:#fff;
   border-radius:8px;
   outline:none;
+  box-sizing:border-box;
 }
 
 .field input:focus,
@@ -104,10 +216,41 @@ href="../style.css">
   display:none;
 }
 
+.logout-btn{
+  float:right;
+  background:#b42323;
+  color:#fff;
+  border:0;
+  border-radius:7px;
+  padding:8px 13px;
+  font-size:12px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.logout-btn:hover{
+  background:#8f1b1b;
+}
+
+.admin-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+}
+
 @media(max-width:600px){
 
   .row{
     grid-template-columns:1fr;
+  }
+
+  .admin-header{
+    align-items:flex-start;
+  }
+
+  .logout-btn{
+    float:none;
   }
 
 }
@@ -118,6 +261,91 @@ href="../style.css">
 
 
 <body>
+
+
+<!-- =========================================
+     LOGIN SCREEN
+========================================= -->
+
+<div id="loginScreen">
+
+  <div class="login-box">
+
+    <div class="login-logo">
+      ◈ ReadNew<span>MangaRaw</span>
+    </div>
+
+    <h1>Admin Login</h1>
+
+    <div class="login-subtitle">
+      Enter your username and password to continue.
+    </div>
+
+
+    <form id="loginForm">
+
+      <div class="login-field">
+
+        <label for="loginUsername">
+          Username
+        </label>
+
+        <input
+          id="loginUsername"
+          type="text"
+          autocomplete="username"
+          placeholder="Enter username"
+          required>
+
+      </div>
+
+
+      <div class="login-field">
+
+        <label for="loginPassword">
+          Password
+        </label>
+
+        <input
+          id="loginPassword"
+          type="password"
+          autocomplete="current-password"
+          placeholder="Enter password"
+          required>
+
+      </div>
+
+
+      <button
+        class="login-btn"
+        type="submit">
+
+        🔐 Login
+
+      </button>
+
+
+      <div
+        id="loginError"
+        class="login-error">
+
+        Invalid username or password.
+
+      </div>
+
+    </form>
+
+  </div>
+
+</div>
+
+
+
+<!-- =========================================
+     ADMIN PANEL
+========================================= -->
+
+<div id="adminPanel">
 
 
 <header>
@@ -133,6 +361,14 @@ href="../index.html">
 
 </a>
 
+<button
+id="logoutBtn"
+class="logout-btn">
+
+Logout
+
+</button>
+
 </div>
 
 </header>
@@ -147,7 +383,11 @@ href="../index.html">
 <div class="box">
 
 
+<div class="admin-header">
+
 <h1>📝 Manga Post / Update</h1>
+
+</div>
 
 
 <div class="info">
@@ -350,7 +590,8 @@ placeholder="one-piece-1191">
 
 <button
 class="btn"
-id="go">
+id="go"
+type="button">
 
 🚀 Generate / Update Files
 
@@ -386,13 +627,156 @@ Nothing generated yet.
 </div>
 
 
+</div>
+
+
+
+<!-- =========================================
+     PUBLISHER
+========================================= -->
 
 <script src="publisher.js"></script>
 
 
+
 <script>
 
-/* Cover image preview */
+/* =========================================
+   LOGIN CONFIGURATION
+========================================= */
+
+const ADMIN_USERNAME = "readmanga";
+const ADMIN_PASSWORD = "read@123";
+
+
+/* =========================================
+   LOGIN ELEMENTS
+========================================= */
+
+const loginScreen =
+document.getElementById("loginScreen");
+
+const adminPanel =
+document.getElementById("adminPanel");
+
+const loginForm =
+document.getElementById("loginForm");
+
+const loginUsername =
+document.getElementById("loginUsername");
+
+const loginPassword =
+document.getElementById("loginPassword");
+
+const loginError =
+document.getElementById("loginError");
+
+const logoutBtn =
+document.getElementById("logoutBtn");
+
+
+/* =========================================
+   CHECK LOGIN
+========================================= */
+
+function checkLogin(){
+
+  const loggedIn =
+    sessionStorage.getItem("readNewMangaRawAdmin");
+
+  if(loggedIn === "true"){
+
+    loginScreen.style.display = "none";
+
+    adminPanel.style.display = "block";
+
+  }else{
+
+    loginScreen.style.display = "flex";
+
+    adminPanel.style.display = "none";
+
+  }
+
+}
+
+
+/* =========================================
+   LOGIN
+========================================= */
+
+loginForm.addEventListener(
+"submit",
+function(e){
+
+  e.preventDefault();
+
+
+  const username =
+    loginUsername.value.trim();
+
+  const password =
+    loginPassword.value;
+
+
+  if(
+    username === ADMIN_USERNAME &&
+    password === ADMIN_PASSWORD
+  ){
+
+    sessionStorage.setItem(
+      "readNewMangaRawAdmin",
+      "true"
+    );
+
+
+    loginError.style.display =
+      "none";
+
+
+    loginUsername.value = "";
+
+    loginPassword.value = "";
+
+
+    checkLogin();
+
+
+  }else{
+
+    loginError.style.display =
+      "block";
+
+
+    loginPassword.value = "";
+
+    loginPassword.focus();
+
+  }
+
+});
+
+
+/* =========================================
+   LOGOUT
+========================================= */
+
+logoutBtn.addEventListener(
+"click",
+function(){
+
+  sessionStorage.removeItem(
+    "readNewMangaRawAdmin"
+  );
+
+  checkLogin();
+
+});
+
+
+/* =========================================
+   COVER IMAGE PREVIEW
+========================================= */
 
 const coverInput =
 document.getElementById("cover");
@@ -408,44 +792,53 @@ coverInput.addEventListener(
 "change",
 function(){
 
-const file =
-this.files[0];
-
-if(!file){
-
-coverPreview.style.display="none";
-
-coverFile.textContent =
-"Select one cover image";
-
-return;
-
-}
+  const file =
+    this.files[0];
 
 
-coverFile.textContent =
-"Cover: " + file.name;
+  if(!file){
+
+    coverPreview.style.display =
+      "none";
+
+    coverFile.textContent =
+      "Select one cover image";
+
+    return;
+
+  }
 
 
-const reader =
-new FileReader();
+  coverFile.textContent =
+    "Cover: " + file.name;
 
 
-reader.onload =
-function(e){
-
-coverPreview.src =
-e.target.result;
-
-coverPreview.style.display =
-"block";
-
-};
+  const reader =
+    new FileReader();
 
 
-reader.readAsDataURL(file);
+  reader.onload =
+  function(e){
+
+    coverPreview.src =
+      e.target.result;
+
+    coverPreview.style.display =
+      "block";
+
+  };
+
+
+  reader.readAsDataURL(file);
 
 });
+
+
+/* =========================================
+   INITIAL CHECK
+========================================= */
+
+checkLogin();
 
 </script>
 
@@ -453,3 +846,4 @@ reader.readAsDataURL(file);
 </body>
 
 </html>
+```
