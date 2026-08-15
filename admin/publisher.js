@@ -1,4 +1,5 @@
 let files = [];
+let coverFile = null;
 
 const $ = id => document.getElementById(id);
 
@@ -9,6 +10,14 @@ const esc = s => String(s).replace(/[&<>"']/g, m => ({
   '"': "&quot;",
   "'": "&#039;"
 }[m]));
+
+$("cover").onchange = e => {
+  coverFile = e.target.files[0] || null;
+
+  $("coverFile").innerHTML = coverFile
+    ? `Cover: ${coverFile.name}`
+    : "Select one cover image";
+};
 
 $("images").onchange = e => {
   files = [...e.target.files];
@@ -40,9 +49,11 @@ $("go").onclick = () => {
   const mode = $("mode").value;
   const old = $("oldslug").value.trim();
 
-  if (!manga || !ch || !files.length) {
+  if (!manga || !ch || !coverFile || !files.length) {
+
     $("out").textContent =
-      "Please enter Manga Title, Chapter Number, and select images.";
+      "Please enter Manga Title, Chapter Number, select a Cover Image, and select Chapter Images.";
+
     return;
   }
 
@@ -51,40 +62,70 @@ $("go").onclick = () => {
       ? slug(old)
       : slug(`${manga}-${ch}`);
 
+  const coverExtension =
+    (coverFile.name.split(".").pop() || "jpg").toLowerCase();
+
+  const coverPath =
+    `images/${s}/cover.${coverExtension}`;
+
   const imgs = files.map((f, i) =>
     `images/${s}/page-${String(i + 1).padStart(2, "0")}.${(f.name.split(".").pop() || "jpg").toLowerCase()}`
   );
 
   const post = {
+
     slug: s,
+
     title: title,
+
     manga: manga,
+
     chapter: ch,
+
     genre: genre,
+
     rating: rating,
+
     views: "0",
+
+    cover: coverPath,
+
     images: imgs
   };
 
   const html = `<!doctype html>
+
 <html lang="ja">
+
 <head>
+
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<meta name="viewport"
+content="width=device-width,initial-scale=1">
+
 <title>${esc(title)}</title>
-<link rel="stylesheet" href="../../style.css">
+
+<link rel="stylesheet"
+href="../../style.css">
+
 </head>
 
 <body>
 
 <header>
+
 <div class="wrap nav">
 
-<a class="brand" href="../../index.html">
+<a class="brand"
+href="../../index.html">
+
 ◈ ReadNew<span>MangaRaw</span>
+
 </a>
 
 </div>
+
 </header>
 
 <main class="wrap"
@@ -147,6 +188,7 @@ ${esc(title)} - Page ${i + 1}
 </footer>
 
 </body>
+
 </html>`;
 
   download(
@@ -162,27 +204,51 @@ ${esc(title)} - Page ${i + 1}
   );
 
   $("out").innerHTML = `
-    <b>Files generated / updated successfully.</b>
-    <br><br>
 
-    HTML:
-    <code>${s}.html</code>
+<b>Files generated / updated successfully.</b>
 
-    <br>
+<br><br>
 
-    JSON:
-    <code>${s}-post.json</code>
+<b>Cover Image:</b>
 
-    <br><br>
+<code>
+images/${s}/cover.${coverExtension}
+</code>
 
-    Images:
-    <code>images/${s}/</code>
+<br><br>
 
-    <br><br>
+<b>Chapter Images:</b>
 
-    <b>ALT text:</b>
-    ${esc(title)} - Page 1, Page 2, Page 3 ...
-  `;
+<code>
+images/${s}/page-01...
+</code>
+
+<br><br>
+
+<b>HTML:</b>
+
+<code>${s}.html</code>
+
+<br>
+
+<b>JSON:</b>
+
+<code>${s}-post.json</code>
+
+<br><br>
+
+<b>Cover ALT:</b>
+
+${esc(title)} - Cover
+
+<br>
+
+<b>Chapter ALT:</b>
+
+${esc(title)} - Page 1, Page 2, Page 3 ...
+
+`;
+
 };
 
 function download(name, data, type) {
@@ -194,7 +260,8 @@ function download(name, data, type) {
 
   const a = document.createElement("a");
 
-  a.href = URL.createObjectURL(blob);
+  a.href =
+    URL.createObjectURL(blob);
 
   a.download = name;
 
@@ -205,6 +272,8 @@ function download(name, data, type) {
   a.remove();
 
   setTimeout(() => {
+
     URL.revokeObjectURL(a.href);
+
   }, 1000);
 }
