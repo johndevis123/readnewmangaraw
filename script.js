@@ -65,15 +65,19 @@ function render(list) {
         >
 
           ${
-            p.images?.[0]
+            p.cover
               ? `
                 <img
-                  src="${p.images[0]}"
-                  alt="${esc(p.title)} - Page 1"
+                  src="${esc(p.cover)}"
+                  alt=""
                   loading="lazy"
                 >
               `
-              : esc(p.manga || p.title)
+              : `
+                <div class="cover-placeholder">
+                  ${esc(p.manga || p.title)}
+                </div>
+              `
           }
 
         </div>
@@ -118,7 +122,19 @@ function render(list) {
           </div>
 
           <div class="rcover">
-            ${esc(p.manga || p.title)}
+
+            ${
+              p.cover
+                ? `
+                  <img
+                    src="${esc(p.cover)}"
+                    alt=""
+                    loading="lazy"
+                  >
+                `
+                : esc(p.manga || p.title)
+            }
+
           </div>
 
           <div>
