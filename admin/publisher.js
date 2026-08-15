@@ -3,53 +3,68 @@ let coverFile = null;
 
 const $ = id => document.getElementById(id);
 
-const esc = s => String(s).replace(/[&<>"']/g, m => ({
-  "&": "&amp;",
-  "<": "&lt;",
-  ">": "&gt;",
-  '"': "&quot;",
-  "'": "&#039;"
-}[m]));
+const WORKER_URL =
+  "https://manga-cms-api.ghazaalbaloch2.workers.dev/publish";
 
 $("cover").onchange = e => {
-  coverFile = e.target.files[0] || null;
 
-  $("coverFile").innerHTML = coverFile
-    ? `Cover: ${coverFile.name}`
-    : "Select one cover image";
+  coverFile =
+    e.target.files[0] || null;
+
+  $("coverFile").innerHTML =
+    coverFile
+      ? `Cover: ${coverFile.name}`
+      : "Select one cover image";
 };
+
 
 $("images").onchange = e => {
-  files = [...e.target.files];
 
-  $("files").innerHTML = files.length
-    ? files.map((f, i) => `${i + 1}. ${f.name}`).join("<br>")
-    : "Select images";
+  files =
+    [...e.target.files];
+
+  $("files").innerHTML =
+    files.length
+      ? files
+          .map((f, i) =>
+            `${i + 1}. ${f.name}`
+          )
+          .join("<br>")
+      : "Select images";
 };
 
-function slug(s) {
-  return s
-    .trim()
-    .replace(/[^a-zA-Z0-9一-龯ぁ-んァ-ン]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .toLowerCase();
-}
 
-$("go").onclick = () => {
+$("go").onclick = async () => {
 
-  const manga = $("manga").value.trim();
-  const ch = $("chapter").value.trim();
+  const manga =
+    $("manga").value.trim();
+
+  const chapter =
+    $("chapter").value.trim();
 
   const title =
     $("title").value.trim() ||
-    `${manga} Raw ${ch}`;
+    `${manga} Raw ${chapter}`;
 
-  const genre = $("genre").value;
-  const rating = $("rating").value;
-  const mode = $("mode").value;
-  const old = $("oldslug").value.trim();
+  const genre =
+    $("genre").value;
 
-  if (!manga || !ch || !coverFile || !files.length) {
+  const rating =
+    $("rating").value;
+
+  const mode =
+    $("mode").value;
+
+  const oldslug =
+    $("oldslug").value.trim();
+
+
+  if (
+    !manga ||
+    !chapter ||
+    !coverFile ||
+    !files.length
+  ) {
 
     $("out").textContent =
       "Please enter Manga Title, Chapter Number, select a Cover Image, and select Chapter Images.";
@@ -57,223 +72,195 @@ $("go").onclick = () => {
     return;
   }
 
-  const s =
-    mode === "update" && old
-      ? slug(old)
-      : slug(`${manga}-${ch}`);
 
-  const coverExtension =
-    (coverFile.name.split(".").pop() || "jpg").toLowerCase();
+  const out =
+    $("out");
 
-  const coverPath =
-    `images/${s}/cover.${coverExtension}`;
+  const button =
+    $("go");
 
-  const imgs = files.map((f, i) =>
-    `images/${s}/page-${String(i + 1).padStart(2, "0")}.${(f.name.split(".").pop() || "jpg").toLowerCase()}`
-  );
 
-  const post = {
+  button.disabled =
+    true;
 
-    slug: s,
+  button.textContent =
+    "⏳ Uploading...";
 
-    title: title,
 
-    manga: manga,
+  out.innerHTML =
+    "Uploading files to GitHub...<br><br>Please wait.";
 
-    chapter: ch,
 
-    genre: genre,
+  try {
 
-    rating: rating,
+    const formData =
+      new FormData();
 
-    views: "0",
 
-    cover: coverPath,
+    formData.append(
+      "manga",
+      manga
+    );
 
-    images: imgs
-  };
+    formData.append(
+      "chapter",
+      chapter
+    );
 
-  const html = `<!doctype html>
+    formData.append(
+      "title",
+      title
+    );
 
-<html lang="ja">
+    formData.append(
+      "genre",
+      genre
+    );
 
-<head>
+    formData.append(
+      "rating",
+      rating
+    );
 
-<meta charset="utf-8">
+    formData.append(
+      "mode",
+      mode
+    );
 
-<meta name="viewport"
-content="width=device-width,initial-scale=1">
+    formData.append(
+      "oldslug",
+      oldslug
+    );
 
-<title>${esc(title)}</title>
 
-<link rel="stylesheet"
-href="../../style.css">
+    formData.append(
+      "cover",
+      coverFile,
+      coverFile.name
+    );
 
-</head>
 
-<body>
+    files.forEach(file => {
 
-<header>
+      formData.append(
+        "images",
+        file,
+        file.name
+      );
 
-<div class="wrap nav">
+    });
 
-<a class="brand"
-href="../../index.html">
 
-◈ ReadNew<span>MangaRaw</span>
+    const response =
+      await fetch(
+        WORKER_URL,
+        {
+          method: "POST",
+          body: formData
+        }
+      );
 
-</a>
 
-</div>
+    const result =
+      await response.json();
 
-</header>
 
-<main class="wrap"
-style="display:block;max-width:1050px;margin-top:28px">
+    if (!response.ok ||
+        !result.success) {
 
-<section class="panel">
+      throw new Error(
+        result.error ||
+        `Upload failed (${response.status})`
+      );
 
-<div class="heading">
+    }
 
-<h1>${esc(title)}</h1>
 
-<p>
-${esc(manga)}
-　
-${esc(ch)}
-　
-·
-　
-${esc(genre)}
-</p>
+    out.innerHTML = `
 
-</div>
-
-<div style="padding:18px">
-
-${files.map((f, i) => `
-
-<figure
-style="margin:0 0 18px;text-align:center">
-
-<img
-src="../../${imgs[i]}"
-alt="${esc(title)} - Page ${i + 1}"
-loading="lazy"
-style="max-width:100%;height:auto;border-radius:7px">
-
-<figcaption
-style="font-size:11px;color:#8197ae">
-
-${esc(title)} - Page ${i + 1}
-
-</figcaption>
-
-</figure>
-
-`).join("")}
-
-</div>
-
-</section>
-
-</main>
-
-<footer>
-
-<div class="copy">
-© 2026 ReadNewMangaRaw
-</div>
-
-</footer>
-
-</body>
-
-</html>`;
-
-  download(
-    `${s}.html`,
-    html,
-    "text/html"
-  );
-
-  download(
-    `${s}-post.json`,
-    JSON.stringify(post, null, 2),
-    "application/json"
-  );
-
-  $("out").innerHTML = `
-
-<b>Files generated / updated successfully.</b>
+<b>✅ Published Successfully!</b>
 
 <br><br>
 
-<b>Cover Image:</b>
+<b>Slug:</b>
+<code>${escapeHTML(result.slug)}</code>
 
-<code>
-images/${s}/cover.${coverExtension}
-</code>
+<br><br>
+
+<b>Chapter HTML:</b>
+<code>${escapeHTML(result.html)}</code>
+
+<br><br>
+
+<b>Cover:</b>
+<code>${escapeHTML(result.cover)}</code>
 
 <br><br>
 
 <b>Chapter Images:</b>
+<br>
 
-<code>
-images/${s}/page-01...
-</code>
+${result.images
+  .map(
+    x =>
+      `<code>${escapeHTML(x)}</code>`
+  )
+  .join("<br>")}
 
 <br><br>
 
-<b>HTML:</b>
-
-<code>${s}.html</code>
-
-<br>
-
-<b>JSON:</b>
-
-<code>${s}-post.json</code>
-
-<br><br>
-
-<b>Cover ALT:</b>
-
-${esc(title)} - Cover
-
-<br>
-
-<b>Chapter ALT:</b>
-
-${esc(title)} - Page 1, Page 2, Page 3 ...
+GitHub has been updated successfully.
 
 `;
 
+  } catch(error) {
+
+    console.error(error);
+
+    out.innerHTML = `
+
+<b style="color:#ff7777">
+❌ Upload Failed
+</b>
+
+<br><br>
+
+${escapeHTML(
+  error.message ||
+  String(error)
+)}
+
+<br><br>
+
+Please check the Worker and GitHub settings.
+
+`;
+
+  } finally {
+
+    button.disabled =
+      false;
+
+    button.textContent =
+      "🚀 Generate / Update Files";
+
+  }
+
 };
 
-function download(name, data, type) {
 
-  const blob = new Blob(
-    [data],
-    { type: type }
-  );
+function escapeHTML(value) {
 
-  const a = document.createElement("a");
+  return String(value ?? "")
+    .replace(
+      /[&<>"']/g,
+      m => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+      }[m])
+    );
 
-  a.href =
-    URL.createObjectURL(blob);
-
-  a.download = name;
-
-  document.body.appendChild(a);
-
-  a.click();
-
-  a.remove();
-
-  setTimeout(() => {
-
-    URL.revokeObjectURL(a.href);
-
-  }, 1000);
 }
