@@ -1,24 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://readnewmangaraw.github.io/</loc>
-  </url>
-  <url>
-    <loc>https://readnewmangaraw.github.io/posts/golden-drop-%E7%AC%AC141%E8%A9%B1.html</loc>
-  </url>
-  <url>
-    <loc>https://readnewmangaraw.github.io/posts/under-ninja-%E7%AC%AC168%E8%A9%B1.html</loc>
-  </url>
-  <url>
-    <loc>https://readnewmangaraw.github.io/posts/kagurabachi-129.html</loc>
-  </url>
-  <url>
-    <loc>https://readnewmangaraw.github.io/posts/wind-breaker-226.html</loc>
-  </url>
-  <url>
-    <loc>https://readnewmangaraw.github.io/posts/sakamoto-days-272.html</loc>
-  </url>
-  <url>
-    <loc>https://readnewmangaraw.github.io/posts/one-piece-1191.html</loc>
-  </url>
-</urlset>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <sitemap>
+    <loc>https://readnewmangaraw.github.io/post_sitemap.xml</loc>
+  </sitemap>
+</sitemapindex>
