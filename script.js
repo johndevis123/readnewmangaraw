@@ -50,9 +50,9 @@ function render(list) {
   document.querySelector("#latest").innerHTML =
     list.map((p, i) => `
 
-      <article
+      <a
         class="card"
-        onclick="location.href='posts/${encodeURIComponent(p.slug)}.html'"
+        href="posts/${encodeURIComponent(p.slug)}.html"
       >
 
         <div
@@ -100,7 +100,7 @@ function render(list) {
 
         </div>
 
-      </article>
+      </a>
 
     `).join("") ||
     `
