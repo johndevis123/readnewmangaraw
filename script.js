@@ -12,7 +12,7 @@ const esc = s =>
       "&": "&amp;",
       "<": "&lt;",
       ">": "&gt;",
-      '"': "&quot;",
+      '"': "&#039;",
       "'": "&#039;"
     }[m])
   );
@@ -28,7 +28,6 @@ function createAd300x250(container) {
     return;
   }
 
-
   const wrapper =
     document.createElement("div");
 
@@ -39,7 +38,6 @@ function createAd300x250(container) {
     text-align:center;
     overflow:hidden;
   `;
-
 
   const options =
     document.createElement("script");
@@ -54,7 +52,6 @@ function createAd300x250(container) {
     };
   `;
 
-
   const script =
     document.createElement("script");
 
@@ -63,13 +60,10 @@ function createAd300x250(container) {
 
   script.async = true;
 
-
   wrapper.appendChild(options);
-
   wrapper.appendChild(script);
 
   container.appendChild(wrapper);
-
 }
 
 
@@ -83,7 +77,6 @@ function createAd728x90(container) {
     return;
   }
 
-
   const wrapper =
     document.createElement("div");
 
@@ -94,7 +87,6 @@ function createAd728x90(container) {
     text-align:center;
     overflow:hidden;
   `;
-
 
   const options =
     document.createElement("script");
@@ -109,7 +101,6 @@ function createAd728x90(container) {
     };
   `;
 
-
   const script =
     document.createElement("script");
 
@@ -118,13 +109,10 @@ function createAd728x90(container) {
 
   script.async = true;
 
-
   wrapper.appendChild(options);
-
   wrapper.appendChild(script);
 
   container.appendChild(wrapper);
-
 }
 
 
@@ -138,14 +126,11 @@ function loadBannerAds(container) {
     return;
   }
 
-
   container.innerHTML = "";
-
 
   createAd300x250(container);
 
   createAd728x90(container);
-
 }
 
 
@@ -166,7 +151,6 @@ async function load() {
         }
       );
 
-
     if (!response.ok) {
 
       throw new Error(
@@ -176,16 +160,13 @@ async function load() {
 
     }
 
-
     const data =
       await response.json();
-
 
     posts =
       Array.isArray(data.posts)
         ? data.posts
         : [];
-
 
   } catch (error) {
 
@@ -194,14 +175,11 @@ async function load() {
       error
     );
 
-
     posts = [];
 
   }
 
-
   render(posts);
-
 }
 
 
@@ -212,10 +190,7 @@ async function load() {
 function render(list) {
 
   const latest =
-    document.querySelector(
-      "#latest"
-    );
-
+    document.querySelector("#latest");
 
   if (!latest) {
 
@@ -227,9 +202,7 @@ function render(list) {
 
   }
 
-
   latest.innerHTML = "";
-
 
   if (!list.length) {
 
@@ -241,20 +214,20 @@ function render(list) {
           color:#91a5bd;
         "
       >
-
         まだ投稿がありません。
-
       </p>
 
     `;
 
-
     renderRanking([]);
 
     return;
-
   }
 
+
+  /* =======================================
+     CREATE EACH POST
+  ======================================= */
 
   list.forEach(
     (post, index) => {
@@ -265,23 +238,43 @@ function render(list) {
         );
 
 
-      /* ===================================
+      /* =====================================
+         POST WRAPPER
+
+         Card + reader are inside SAME
+         wrapper so reader opens directly
+         below its own card.
+      ===================================== */
+
+      const wrapper =
+        document.createElement("div");
+
+      wrapper.className =
+        "post-wrapper";
+
+      wrapper.dataset.slug =
+        slug;
+
+      wrapper.style.cssText = `
+        width:100%;
+        min-width:0;
+      `;
+
+
+      /* =====================================
          POST CARD
-      =================================== */
+      ===================================== */
 
       const card =
         document.createElement(
           "article"
         );
 
-
       card.className =
         "card";
 
-
       card.style.cursor =
         "pointer";
-
 
       card.dataset.slug =
         slug;
@@ -345,11 +338,9 @@ function render(list) {
         <div class="body">
 
           <h3>
-
             ${esc(
               post.title
             )}
-
           </h3>
 
 
@@ -383,9 +374,34 @@ function render(list) {
       `;
 
 
-      /* ===================================
+      /* =====================================
+         INLINE READER
+      ===================================== */
+
+      const box =
+        document.createElement(
+          "div"
+        );
+
+      box.className =
+        "inline-post";
+
+      box.id =
+        "post-" + slug;
+
+      box.style.display =
+        "none";
+
+      box.style.width =
+        "100%";
+
+      box.style.gridColumn =
+        "1 / -1";
+
+
+      /* =====================================
          CARD CLICK
-      =================================== */
+      ===================================== */
 
       card.addEventListener(
         "click",
@@ -397,32 +413,15 @@ function render(list) {
       );
 
 
-      latest.appendChild(card);
+      /* =====================================
+         ADD CARD + READER TO WRAPPER
+      ===================================== */
 
+      wrapper.appendChild(card);
 
-      /* ===================================
-         INLINE POST CONTAINER
-      =================================== */
+      wrapper.appendChild(box);
 
-      const box =
-        document.createElement(
-          "div"
-        );
-
-
-      box.className =
-        "inline-post";
-
-
-      box.id =
-        "post-" + slug;
-
-
-      box.style.display =
-        "none";
-
-
-      latest.appendChild(box);
+      latest.appendChild(wrapper);
 
     }
   );
@@ -533,30 +532,25 @@ function openPost(slug) {
       post.title || ""
     );
 
-
   const manga =
     esc(
       post.manga || ""
     );
-
 
   const chapter =
     esc(
       post.chapter || ""
     );
 
-
   const genre =
     esc(
       post.genre || ""
     );
 
-
   const rating =
     esc(
       post.rating || "0"
     );
-
 
   const images =
     Array.isArray(
@@ -572,7 +566,6 @@ function openPost(slug) {
 
   let coverHTML =
     "";
-
 
   if (post.cover) {
 
@@ -615,7 +608,6 @@ function openPost(slug) {
 
   let imageHTML =
     "";
-
 
   images.forEach(
     (path, index) => {
@@ -669,7 +661,7 @@ function openPost(slug) {
 
 
   /* =====================================
-     INLINE POST
+     INLINE POST CONTENT
   ===================================== */
 
   box.innerHTML = `
@@ -682,7 +674,6 @@ function openPost(slug) {
         overflow:hidden;
       "
     >
-
 
       <div
         class="heading"
@@ -829,7 +820,6 @@ function openPost(slug) {
       ".inline-post-ads"
     );
 
-
   if (postAds) {
 
     loadBannerAds(
@@ -866,7 +856,7 @@ function openPost(slug) {
 
 
   /* =====================================
-     SHOW
+     SHOW POST
   ===================================== */
 
   box.style.display =
@@ -874,7 +864,7 @@ function openPost(slug) {
 
 
   /* =====================================
-     SCROLL
+     SCROLL TO POST
   ===================================== */
 
   setTimeout(
@@ -913,7 +903,6 @@ function closePost(slug) {
 
   box.style.display =
     "none";
-
 
   box.innerHTML =
     "";
@@ -1135,7 +1124,6 @@ document
       button.addEventListener(
         "click",
         function () {
-
 
           document
             .querySelectorAll(
