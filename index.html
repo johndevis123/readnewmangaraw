@@ -25,7 +25,9 @@ ReadNewMangaRaw - 最新漫画 Raw
 >
 
 
-<!-- Google Analytics -->
+<!-- =========================================
+     GOOGLE ANALYTICS
+========================================= -->
 
 <script
   async
@@ -42,13 +44,13 @@ function gtag() {
 }
 
 gtag(
-  'js',
+  "js",
   new Date()
 );
 
 gtag(
-  'config',
-  'G-LL2BH8VT9Q'
+  "config",
+  "G-LL2BH8VT9Q"
 );
 
 </script>
@@ -61,7 +63,7 @@ gtag(
 
 <!-- =========================================
      SOCIAL BAR
-     LOAD ONCE ONLY
+     ONLY ONCE
 ========================================= -->
 
 <script
@@ -147,7 +149,18 @@ gtag(
 
 
 <!-- =========================================
+     MAIN
+========================================= -->
+
+<main class="wrap">
+
+
+<!-- =========================================
      HOMEPAGE ADS
+     
+     IMPORTANT:
+     No fixed height.
+     JS inserts ads here.
 ========================================= -->
 
 <div
@@ -162,11 +175,8 @@ gtag(
 
 
 <!-- =========================================
-     MAIN
+     POSTS PANEL
 ========================================= -->
-
-<main class="wrap">
-
 
 <section class="panel">
 
@@ -189,6 +199,7 @@ gtag(
 ========================================= -->
 
 <div class="tabs">
+
 
 <button
   type="button"
@@ -230,18 +241,23 @@ gtag(
 スポーツ
 </button>
 
+
 </div>
 
 
 <!-- =========================================
-     SEO LATEST
+     SEO AREA
 ========================================= -->
 
 <div id="seoLatest"></div>
 
 
 <!-- =========================================
-     POSTS
+     POSTS GRID
+
+     IMPORTANT:
+     JS puts opened post directly
+     after clicked card.
 ========================================= -->
 
 <div
@@ -304,7 +320,9 @@ gtag(
      MAIN JAVASCRIPT
 ========================================= -->
 
-<script src="script.js?v=1000"></script>
+<script
+  src="script.js?v=2000"
+></script>
 
 
 </body>
