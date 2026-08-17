@@ -20,25 +20,36 @@ const esc = s =>
 
 /* =========================================
    ADS
+   NO LAZY LOAD
+========================================= */
+
+
+/* =========================================
+   300x250 AD
 ========================================= */
 
 function createAd300x250(container) {
 
   if (!container) return;
 
+
   const wrapper =
     document.createElement("div");
+
 
   wrapper.style.cssText = `
     width:100%;
     max-width:300px;
+    min-height:250px;
     margin:20px auto;
     text-align:center;
     overflow:hidden;
   `;
 
+
   const options =
     document.createElement("script");
+
 
   options.textContent = `
     atOptions = {
@@ -50,24 +61,23 @@ function createAd300x250(container) {
     };
   `;
 
+
   const script =
     document.createElement("script");
+
 
   script.src =
     "https://www.highperformanceformat.com/a8a805cc341bb0537e9ecf27dd55a271/invoke.js";
 
-  /*
-    IMPORTANT:
-    No lazy loading here.
-    Ad script loads immediately.
-  */
 
   script.async = true;
+
 
   wrapper.appendChild(options);
   wrapper.appendChild(script);
 
   container.appendChild(wrapper);
+
 }
 
 
@@ -79,19 +89,24 @@ function createAd728x90(container) {
 
   if (!container) return;
 
+
   const wrapper =
     document.createElement("div");
+
 
   wrapper.style.cssText = `
     width:100%;
     max-width:728px;
+    min-height:90px;
     margin:20px auto;
     text-align:center;
     overflow:hidden;
   `;
 
+
   const options =
     document.createElement("script");
+
 
   options.textContent = `
     atOptions = {
@@ -103,39 +118,51 @@ function createAd728x90(container) {
     };
   `;
 
+
   const script =
     document.createElement("script");
+
 
   script.src =
     "https://www.highperformanceformat.com/ce956904ebd6d4f505c512d6335bafb6/invoke.js";
 
-  /*
-    IMPORTANT:
-    No lazy loading here.
-  */
 
   script.async = true;
+
 
   wrapper.appendChild(options);
   wrapper.appendChild(script);
 
   container.appendChild(wrapper);
+
 }
 
 
 /* =========================================
-   LOAD BANNER ADS
+   LOAD 3 x 300 + 3 x 728 ADS
 ========================================= */
 
 function loadBannerAds(container) {
 
   if (!container) return;
 
+
   container.innerHTML = "";
 
+
+  /* 300x250 - 3 ADS */
+
+  createAd300x250(container);
+  createAd300x250(container);
   createAd300x250(container);
 
+
+  /* 728x90 - 3 ADS */
+
   createAd728x90(container);
+  createAd728x90(container);
+  createAd728x90(container);
+
 }
 
 
@@ -156,6 +183,7 @@ async function load() {
         }
       );
 
+
     if (!response.ok) {
 
       throw new Error(
@@ -165,13 +193,16 @@ async function load() {
 
     }
 
+
     const data =
       await response.json();
+
 
     posts =
       Array.isArray(data.posts)
         ? data.posts
         : [];
+
 
   } catch (error) {
 
@@ -180,11 +211,14 @@ async function load() {
       error
     );
 
+
     posts = [];
 
   }
 
+
   render(posts);
+
 }
 
 
@@ -195,7 +229,16 @@ async function load() {
 function render(list) {
 
   const latest =
-    document.querySelector("#latest");
+    document.querySelector(
+      "#latest"
+    );
+
+
+  const reader =
+    document.querySelector(
+      "#inlineReader"
+    );
+
 
   if (!latest) {
 
@@ -204,14 +247,26 @@ function render(list) {
     );
 
     return;
+
   }
 
 
-  latest.innerHTML = "";
+  /* Close opened post when
+     search/filter changes */
 
-  latest.classList.remove(
-    "post-is-open"
-  );
+  if (reader) {
+
+    reader.style.display =
+      "none";
+
+    reader.innerHTML =
+      "";
+
+  }
+
+
+  latest.innerHTML =
+    "";
 
 
   if (!list.length) {
@@ -231,11 +286,22 @@ function render(list) {
 
     `;
 
+
     renderRanking([]);
 
     return;
+
   }
 
+
+  /* =====================================
+     CREATE POST CARDS ONLY
+     
+     IMPORTANT:
+     Reader is NOT inside the grid.
+     Therefore opened post can stay
+     completely above all cards.
+  ===================================== */
 
   list.forEach(
     (post, index) => {
@@ -245,10 +311,6 @@ function render(list) {
           post.slug || ""
         );
 
-
-      /* ===================================
-         POST CARD
-      =================================== */
 
       const card =
         document.createElement(
@@ -367,10 +429,6 @@ function render(list) {
       `;
 
 
-      /* ===================================
-         CARD CLICK
-      =================================== */
-
       card.addEventListener(
         "click",
         function () {
@@ -382,54 +440,6 @@ function render(list) {
 
 
       latest.appendChild(card);
-
-
-      /* ===================================
-         INLINE POST CONTAINER
-
-         IMPORTANT:
-         Container remains immediately
-         after the clicked card.
-
-         Therefore other cards continue
-         below the opened post.
-      =================================== */
-
-      const box =
-        document.createElement(
-          "div"
-        );
-
-
-      box.className =
-        "inline-post";
-
-
-      box.id =
-        "post-" + slug;
-
-
-      box.style.display =
-        "none";
-
-
-      /*
-        IMPORTANT:
-        Make opened post a full-width
-        grid row.
-      */
-
-      box.style.width =
-        "100%";
-
-      box.style.gridColumn =
-        "1 / -1";
-
-      box.style.boxSizing =
-        "border-box";
-
-
-      latest.appendChild(box);
 
     }
   );
@@ -462,120 +472,41 @@ function openPost(slug) {
     );
 
     return;
+
   }
 
 
-  const box =
-    document.getElementById(
-      "post-" + slug
+  const reader =
+    document.querySelector(
+      "#inlineReader"
     );
 
 
-  if (!box) {
+  if (!reader) {
 
     console.error(
-      "Inline post container not found:",
-      slug
+      "#inlineReader not found"
     );
 
     return;
+
   }
 
 
-  const latest =
-    document.querySelector(
-      "#latest"
-    );
-
-
   /* =====================================
-     CLOSE OTHER POSTS
-  ===================================== */
-
-  document
-    .querySelectorAll(
-      ".inline-post"
-    )
-    .forEach(
-      element => {
-
-        if (
-          element !== box
-        ) {
-
-          element.style.display =
-            "none";
-
-          element.innerHTML =
-            "";
-
-        }
-
-      }
-    );
-
-
-  /* =====================================
-     TOGGLE CURRENT POST
+     IF SAME POST IS ALREADY OPEN
   ===================================== */
 
   if (
-    box.style.display ===
-    "block"
+    reader.style.display ===
+      "block" &&
+    reader.dataset.slug ===
+      String(slug)
   ) {
 
-    box.style.display =
-      "none";
-
-    box.innerHTML =
-      "";
-
-
-    if (latest) {
-
-      latest.classList.remove(
-        "post-is-open"
-      );
-
-    }
+    closePost(slug);
 
     return;
-  }
-
-
-  /* =====================================
-     FORCE FULL WIDTH ROW
-  ===================================== */
-
-  box.style.display =
-    "block";
-
-
-  box.style.gridColumn =
-    "1 / -1";
-
-
-  box.style.gridRow =
-    "auto";
-
-
-  box.style.width =
-    "100%";
-
-
-  box.style.maxWidth =
-    "100%";
-
-
-  box.style.boxSizing =
-    "border-box";
-
-
-  if (latest) {
-
-    latest.classList.add(
-      "post-is-open"
-    );
 
   }
 
@@ -668,8 +599,7 @@ function openPost(slug) {
   /* =====================================
      CHAPTER IMAGES
      
-     IMPORTANT:
-     NO loading="lazy"
+     NO LAZY LOAD
   ===================================== */
 
   let imageHTML =
@@ -730,23 +660,49 @@ function openPost(slug) {
 
 
   /* =====================================
-     INLINE POST
+     OPEN FULL WIDTH READER
+     
+     Reader is ABOVE #latest.
   ===================================== */
 
-  box.innerHTML = `
+  reader.dataset.slug =
+    String(slug);
+
+
+  reader.style.display =
+    "block";
+
+
+  reader.style.width =
+    "100%";
+
+
+  reader.style.maxWidth =
+    "100%";
+
+
+  reader.style.boxSizing =
+    "border-box";
+
+
+  reader.innerHTML = `
 
     <section
       class="panel"
       style="
         width:100%;
         max-width:100%;
-        margin:18px 0 25px;
+        margin:0 0 25px;
         padding:0;
         overflow:hidden;
         box-sizing:border-box;
       "
     >
 
+
+      <!-- =========================
+           POST HEADER
+      ========================== -->
 
       <div
         class="heading"
@@ -785,6 +741,10 @@ function openPost(slug) {
       </div>
 
 
+      <!-- =========================
+           POST CONTENT
+      ========================== -->
+
       <div
         style="
           width:100%;
@@ -793,6 +753,8 @@ function openPost(slug) {
         "
       >
 
+
+        <!-- DESCRIPTION -->
 
         <div
           style="
@@ -834,28 +796,31 @@ function openPost(slug) {
         ${imageHTML}
 
 
-        <!-- =================================
+        <!-- =========================
              POST ADS
-        ================================= -->
+             3 x 300
+             3 x 728
+        ========================== -->
 
         <div
           class="inline-post-ads"
           style="
             width:100%;
-            margin:25px auto;
+            margin:30px auto;
             text-align:center;
           "
         ></div>
 
 
-        <!-- =================================
-             CLOSE BUTTON
-        ================================= -->
+        <!-- =========================
+             CLOSE
+        ========================== -->
 
         <div
           style="
             text-align:center;
             margin-top:25px;
+            padding-bottom:20px;
           "
         >
 
@@ -891,7 +856,7 @@ function openPost(slug) {
   ===================================== */
 
   const postAds =
-    box.querySelector(
+    reader.querySelector(
       ".inline-post-ads"
     );
 
@@ -910,7 +875,7 @@ function openPost(slug) {
   ===================================== */
 
   const closeButton =
-    box.querySelector(
+    reader.querySelector(
       ".close-inline-post"
     );
 
@@ -932,13 +897,13 @@ function openPost(slug) {
 
 
   /* =====================================
-     SCROLL TO OPENED POST
+     SCROLL TO TOP OF OPENED POST
   ===================================== */
 
   setTimeout(
     () => {
 
-      box.scrollIntoView({
+      reader.scrollIntoView({
         behavior: "smooth",
         block: "start"
       });
@@ -956,36 +921,25 @@ function openPost(slug) {
 
 function closePost(slug) {
 
-  const box =
-    document.getElementById(
-      "post-" + slug
+  const reader =
+    document.querySelector(
+      "#inlineReader"
     );
 
 
-  if (!box) return;
+  if (!reader) return;
 
 
-  box.style.display =
+  reader.style.display =
     "none";
 
 
-  box.innerHTML =
+  reader.innerHTML =
     "";
 
 
-  const latest =
-    document.querySelector(
-      "#latest"
-    );
-
-
-  if (latest) {
-
-    latest.classList.remove(
-      "post-is-open"
-    );
-
-  }
+  reader.dataset.slug =
+    "";
 
 }
 
@@ -1248,30 +1202,48 @@ document
    HOMEPAGE ADS
 ========================================= */
 
-document.addEventListener(
-  "DOMContentLoaded",
-  function () {
+function loadHomepageAds() {
 
-    const homepageAds =
-      document.querySelector(
-        "#homepageAds"
-      );
+  const homepageAds =
+    document.querySelector(
+      "#homepageAds"
+    );
 
 
-    if (homepageAds) {
+  if (!homepageAds) return;
 
-      loadBannerAds(
-        homepageAds
-      );
 
-    }
+  loadBannerAds(
+    homepageAds
+  );
 
-  }
-);
+}
 
 
 /* =========================================
    START
 ========================================= */
 
-load();
+if (
+  document.readyState ===
+  "loading"
+) {
+
+  document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+      loadHomepageAds();
+
+      load();
+
+    }
+  );
+
+} else {
+
+  loadHomepageAds();
+
+  load();
+
+}
