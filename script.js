@@ -33,27 +33,23 @@ function createAd300x250(container) {
 
   if (!container) return;
 
-
-  const wrapper =
-    document.createElement("div");
-
+  const wrapper = document.createElement("div");
 
   wrapper.style.cssText = `
-    width:100%;
-    max-width:300px;
+    display:block;
+    width:300px;
     height:250px;
     margin:0 auto;
     padding:0;
+    border:0;
     line-height:0;
-    text-align:center;
+    font-size:0;
     overflow:hidden;
-    display:block;
+    text-align:center;
   `;
 
 
-  const options =
-    document.createElement("script");
-
+  const options = document.createElement("script");
 
   options.textContent = `
     atOptions = {
@@ -66,13 +62,10 @@ function createAd300x250(container) {
   `;
 
 
-  const script =
-    document.createElement("script");
-
+  const script = document.createElement("script");
 
   script.src =
     "https://www.highperformanceformat.com/a8a805cc341bb0537e9ecf27dd55a271/invoke.js";
-
 
   script.async = true;
 
@@ -81,7 +74,6 @@ function createAd300x250(container) {
   wrapper.appendChild(script);
 
   container.appendChild(wrapper);
-
 }
 
 
@@ -93,27 +85,24 @@ function createAd728x90(container) {
 
   if (!container) return;
 
-
-  const wrapper =
-    document.createElement("div");
-
+  const wrapper = document.createElement("div");
 
   wrapper.style.cssText = `
+    display:block;
     width:100%;
     max-width:728px;
     height:90px;
     margin:0 auto;
     padding:0;
+    border:0;
     line-height:0;
-    text-align:center;
+    font-size:0;
     overflow:hidden;
-    display:block;
+    text-align:center;
   `;
 
 
-  const options =
-    document.createElement("script");
-
+  const options = document.createElement("script");
 
   options.textContent = `
     atOptions = {
@@ -126,13 +115,10 @@ function createAd728x90(container) {
   `;
 
 
-  const script =
-    document.createElement("script");
-
+  const script = document.createElement("script");
 
   script.src =
     "https://www.highperformanceformat.com/ce956904ebd6d4f505c512d6335bafb6/invoke.js";
-
 
   script.async = true;
 
@@ -141,46 +127,58 @@ function createAd728x90(container) {
   wrapper.appendChild(script);
 
   container.appendChild(wrapper);
-
 }
 
 
 /* =========================================
-   LOAD 3 x 300 + 3 x 728 ADS
-   NO EXTRA GAP
+   AD CONTAINER
+   ZERO GAP
+========================================= */
+
+function prepareAdContainer(container) {
+
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  container.style.cssText = `
+    display:block;
+    width:100%;
+    max-width:100%;
+    margin:0;
+    padding:0;
+    border:0;
+    line-height:0;
+    font-size:0;
+    text-align:center;
+    overflow:hidden;
+  `;
+}
+
+
+/* =========================================
+   LOAD 3 x 300 + 3 x 728
 ========================================= */
 
 function loadBannerAds(container) {
 
   if (!container) return;
 
-
-  container.innerHTML = "";
-
-
-  container.style.cssText = `
-    width:100%;
-    margin:0;
-    padding:0;
-    line-height:0;
-    text-align:center;
-    display:block;
-  `;
+  prepareAdContainer(container);
 
 
-  /* 300x250 ADS */
+  /* 300x250 */
 
   createAd300x250(container);
   createAd300x250(container);
   createAd300x250(container);
 
 
-  /* 728x90 ADS */
+  /* 728x90 */
 
   createAd728x90(container);
   createAd728x90(container);
   createAd728x90(container);
-
 }
 
 
@@ -229,14 +227,12 @@ async function load() {
       error
     );
 
-
     posts = [];
 
   }
 
 
   render(posts);
-
 }
 
 
@@ -247,15 +243,11 @@ async function load() {
 function render(list) {
 
   const latest =
-    document.querySelector(
-      "#latest"
-    );
+    document.querySelector("#latest");
 
 
   const reader =
-    document.querySelector(
-      "#inlineReader"
-    );
+    document.querySelector("#inlineReader");
 
 
   if (!latest) {
@@ -265,61 +257,46 @@ function render(list) {
     );
 
     return;
-
   }
 
 
-  /* Close opened post when
-     search/filter changes */
+  /* Close reader */
 
   if (reader) {
 
-    reader.style.display =
-      "none";
+    reader.style.display = "none";
 
-    reader.innerHTML =
-      "";
+    reader.innerHTML = "";
 
-    reader.dataset.slug =
-      "";
+    reader.dataset.slug = "";
 
   }
 
 
-  latest.innerHTML =
-    "";
+  latest.innerHTML = "";
 
 
   if (!list.length) {
 
     latest.innerHTML = `
-
       <p
         style="
           padding:20px;
           color:#91a5bd;
         "
       >
-
         まだ投稿がありません。
-
       </p>
-
     `;
-
 
     renderRanking([]);
 
-
     return;
-
   }
 
 
   /* =====================================
-     CREATE POST CARDS ONLY
-     
-     Reader remains ABOVE #latest.
+     POST CARDS
   ===================================== */
 
   list.forEach(
@@ -393,12 +370,10 @@ function render(list) {
                 <div
                   class="cover-placeholder"
                 >
-
                   ${esc(
                     post.manga ||
                     post.title
                   )}
-
                 </div>
 
               `
@@ -410,11 +385,9 @@ function render(list) {
         <div class="body">
 
           <h3>
-
             ${esc(
               post.title
             )}
-
           </h3>
 
 
@@ -465,7 +438,6 @@ function render(list) {
 
 
   renderRanking(list);
-
 }
 
 
@@ -491,7 +463,6 @@ function openPost(slug) {
     );
 
     return;
-
   }
 
 
@@ -508,25 +479,21 @@ function openPost(slug) {
     );
 
     return;
-
   }
 
 
   /* =====================================
-     IF SAME POST IS ALREADY OPEN
+     CLOSE SAME POST
   ===================================== */
 
   if (
-    reader.style.display ===
-      "block" &&
-    reader.dataset.slug ===
-      String(slug)
+    reader.style.display === "block" &&
+    reader.dataset.slug === String(slug)
   ) {
 
     closePost(slug);
 
     return;
-
   }
 
 
@@ -576,8 +543,7 @@ function openPost(slug) {
      COVER
   ===================================== */
 
-  let coverHTML =
-    "";
+  let coverHTML = "";
 
 
   if (post.cover) {
@@ -587,9 +553,9 @@ function openPost(slug) {
       <div
         style="
           width:100%;
-          text-align:center;
           margin:0;
           padding:0;
+          text-align:center;
           line-height:0;
         "
       >
@@ -606,25 +572,23 @@ function openPost(slug) {
             max-width:900px;
             height:auto;
             margin:0 auto;
-            border-radius:8px;
+            padding:0;
+            border-radius:0;
           "
         >
 
       </div>
 
     `;
-
   }
 
 
   /* =====================================
      CHAPTER IMAGES
-     
      NO LAZY LOAD
-  ===================================== */
+===================================== */
 
-  let imageHTML =
-    "";
+  let imageHTML = "";
 
 
   images.forEach(
@@ -634,9 +598,10 @@ function openPost(slug) {
 
         <figure
           style="
+            display:block;
+            width:100%;
             margin:0;
             padding:0;
-            width:100%;
             text-align:center;
             line-height:0;
           "
@@ -657,7 +622,8 @@ function openPost(slug) {
               height:auto;
               margin:0;
               padding:0;
-              border-radius:7px;
+              border:0;
+              border-radius:0;
             "
           >
 
@@ -666,7 +632,7 @@ function openPost(slug) {
               margin:0;
               padding:4px 0;
               font-size:11px;
-              line-height:1.3;
+              line-height:1.4;
               color:#8197ae;
             "
           >
@@ -685,10 +651,8 @@ function openPost(slug) {
 
 
   /* =====================================
-     OPEN FULL WIDTH READER
-     
-     Reader is ABOVE #latest.
-  ===================================== */
+     READER
+===================================== */
 
   reader.dataset.slug =
     String(slug);
@@ -706,16 +670,16 @@ function openPost(slug) {
     "100%";
 
 
-  reader.style.boxSizing =
-    "border-box";
-
-
   reader.style.margin =
     "0";
 
 
   reader.style.padding =
     "0";
+
+
+  reader.style.boxSizing =
+    "border-box";
 
 
   reader.innerHTML = `
@@ -727,6 +691,7 @@ function openPost(slug) {
         max-width:100%;
         margin:0;
         padding:0;
+        border:0;
         overflow:hidden;
         box-sizing:border-box;
       "
@@ -740,14 +705,13 @@ function openPost(slug) {
       <div
         class="heading"
         style="
+          margin:0;
           padding:20px;
         "
       >
 
         <h1>
-
           ${title}
-
         </h1>
 
 
@@ -775,13 +739,14 @@ function openPost(slug) {
 
 
       <!-- =========================
-           POST CONTENT
+           CONTENT
       ========================== -->
 
       <div
         style="
           width:100%;
-          padding:18px;
+          margin:0;
+          padding:0;
           box-sizing:border-box;
         "
       >
@@ -792,7 +757,7 @@ function openPost(slug) {
         <div
           style="
             margin:0;
-            padding:0;
+            padding:18px;
             color:#91a5bd;
             font-size:13px;
             line-height:1.8;
@@ -800,24 +765,37 @@ function openPost(slug) {
         >
 
           <p>
-
             ${manga}
             ${chapter}
             の Raw をチェックできます。
-
           </p>
 
 
           <p>
-
             最新の漫画ページを画像で確認できます。
             このページでは
             ${title}
             の章情報と画像を掲載しています。
-
           </p>
 
         </div>
+
+
+        <!-- =========================
+             AD BEFORE CONTENT
+        ========================== -->
+
+        <div
+          class="reader-ads reader-ads-top"
+          style="
+            width:100%;
+            margin:0;
+            padding:0;
+            line-height:0;
+            font-size:0;
+            text-align:center;
+          "
+        ></div>
 
 
         <!-- COVER -->
@@ -831,20 +809,17 @@ function openPost(slug) {
 
 
         <!-- =========================
-             POST ADS
-             3 x 300
-             3 x 728
-
-             NO EXTRA GAP
+             AD AFTER CONTENT
         ========================== -->
 
         <div
-          class="inline-post-ads"
+          class="reader-ads reader-ads-bottom"
           style="
             width:100%;
             margin:0;
             padding:0;
             line-height:0;
+            font-size:0;
             text-align:center;
           "
         ></div>
@@ -857,8 +832,8 @@ function openPost(slug) {
         <div
           style="
             text-align:center;
-            margin:0;
-            padding:10px 0 20px;
+            margin:20px 0;
+            padding:0;
           "
         >
 
@@ -874,9 +849,7 @@ function openPost(slug) {
               cursor:pointer;
             "
           >
-
             ✕ 閉じる
-
           </button>
 
         </div>
@@ -890,19 +863,34 @@ function openPost(slug) {
 
 
   /* =====================================
-     LOAD POST ADS
-  ===================================== */
+     LOAD ADS
+===================================== */
 
-  const postAds =
+  const topAds =
     reader.querySelector(
-      ".inline-post-ads"
+      ".reader-ads-top"
     );
 
 
-  if (postAds) {
+  const bottomAds =
+    reader.querySelector(
+      ".reader-ads-bottom"
+    );
+
+
+  if (topAds) {
 
     loadBannerAds(
-      postAds
+      topAds
+    );
+
+  }
+
+
+  if (bottomAds) {
+
+    loadBannerAds(
+      bottomAds
     );
 
   }
@@ -910,7 +898,7 @@ function openPost(slug) {
 
   /* =====================================
      CLOSE BUTTON
-  ===================================== */
+===================================== */
 
   const closeButton =
     reader.querySelector(
@@ -935,15 +923,15 @@ function openPost(slug) {
 
 
   /* =====================================
-     SCROLL TO TOP OF OPENED POST
-  ===================================== */
+     SCROLL
+===================================== */
 
   setTimeout(
     () => {
 
       reader.scrollIntoView({
-        behavior: "smooth",
-        block: "start"
+        behavior:"smooth",
+        block:"start"
       });
 
     },
@@ -978,7 +966,6 @@ function closePost(slug) {
 
   reader.dataset.slug =
     "";
-
 
 }
 
@@ -1023,9 +1010,7 @@ function renderRanking(list) {
             >
 
               <div class="num">
-
                 ${index + 1}
-
               </div>
 
 
@@ -1094,10 +1079,6 @@ function renderRanking(list) {
       )
       .join("");
 
-
-  /* =====================================
-     RANKING CLICK
-  ===================================== */
 
   rank
     .querySelectorAll(
@@ -1168,9 +1149,7 @@ if (searchInput) {
         );
 
 
-      render(
-        filtered
-      );
+      render(filtered);
 
     }
   );
@@ -1253,12 +1232,15 @@ function loadHomepageAds() {
 
 
   homepageAds.style.cssText = `
+    display:block;
     width:100%;
     margin:0;
     padding:0;
+    border:0;
     line-height:0;
+    font-size:0;
     text-align:center;
-    display:block;
+    overflow:hidden;
   `;
 
 
@@ -1273,6 +1255,15 @@ function loadHomepageAds() {
    START
 ========================================= */
 
+function startApp() {
+
+  loadHomepageAds();
+
+  load();
+
+}
+
+
 if (
   document.readyState ===
   "loading"
@@ -1280,19 +1271,11 @@ if (
 
   document.addEventListener(
     "DOMContentLoaded",
-    function () {
-
-      loadHomepageAds();
-
-      load();
-
-    }
+    startApp
   );
 
 } else {
 
-  loadHomepageAds();
-
-  load();
+  startApp();
 
 }
