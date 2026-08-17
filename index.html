@@ -25,7 +25,7 @@ ReadNewMangaRaw - 最新漫画 Raw
 >
 
 
-<!-- Google tag -->
+<!-- Google Analytics -->
 
 <script
   async
@@ -38,7 +38,9 @@ window.dataLayer =
   window.dataLayer || [];
 
 function gtag(){
+
   dataLayer.push(arguments);
+
 }
 
 gtag(
@@ -110,7 +112,9 @@ gtag(
 
 <input
   id="q"
+  type="search"
   placeholder="漫画を検索..."
+  autocomplete="off"
 >
 
 ⌕
@@ -164,31 +168,40 @@ gtag(
 <div class="tabs">
 
 <button
+  type="button"
   class="on"
   data-g="all"
 >
 すべて
 </button>
 
+
 <button
+  type="button"
   data-g="アクション"
 >
 アクション
 </button>
 
+
 <button
+  type="button"
   data-g="ファンタジー"
 >
 ファンタジー
 </button>
 
+
 <button
+  type="button"
   data-g="恋愛"
 >
 恋愛
 </button>
 
+
 <button
+  type="button"
   data-g="スポーツ"
 >
 スポーツ
@@ -205,20 +218,7 @@ gtag(
 
 
 <!-- =========================================
-     INLINE POST READER
-     
-     IMPORTANT:
-     Post isi page par open hoga.
-========================================= -->
-
-<div
-  id="inlineReader"
-  style="display:none;"
-></div>
-
-
-<!-- =========================================
-     LATEST POSTS
+     POSTS
 ========================================= -->
 
 <div
@@ -238,6 +238,7 @@ gtag(
   class="panel"
   id="ranking"
 >
+
 
 <div class="heading">
 
@@ -277,7 +278,7 @@ gtag(
 
 
 <!-- =========================================
-     JAVASCRIPT
+     SCRIPT
 ========================================= -->
 
 <script src="script.js?v=999"></script>
