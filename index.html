@@ -40,7 +40,9 @@ window.dataLayer =
   window.dataLayer || [];
 
 function gtag() {
+
   dataLayer.push(arguments);
+
 }
 
 gtag(
@@ -55,7 +57,6 @@ gtag(
 
 </script>
 
-
 </head>
 
 
@@ -64,7 +65,7 @@ gtag(
 
 <!-- =========================================
      SOCIAL BAR
-     LOAD ONCE ONLY
+     ONLY ONCE
 ========================================= -->
 
 <script
@@ -158,11 +159,10 @@ gtag(
 
 <!-- =========================================
      HOMEPAGE ADS
-     
+
      IMPORTANT:
+     This is only the ad container.
      No fixed 900px width.
-     No extra padding.
-     No extra blank space.
 ========================================= -->
 
 <div
@@ -172,7 +172,28 @@ gtag(
     margin:0;
     padding:0;
     text-align:center;
-    line-height:0;
+  "
+></div>
+
+
+<!-- =========================================
+     OPENED POST READER
+
+     IMPORTANT:
+     script.js uses this element.
+
+     It is hidden initially.
+========================================= -->
+
+<div
+  id="inlineReader"
+  style="
+    display:none;
+    width:100%;
+    max-width:100%;
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
   "
 ></div>
 
@@ -258,7 +279,7 @@ gtag(
 
 
 <!-- =========================================
-     POSTS
+     POSTS GRID
 ========================================= -->
 
 <div
@@ -324,7 +345,7 @@ gtag(
 ========================================= -->
 
 <script
-  src="script.js?v=1000"
+  src="script.js?v=2000"
 ></script>
 
 
