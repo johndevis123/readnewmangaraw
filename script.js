@@ -760,3 +760,6 @@ document
 ========================================= */
 
 load();
+console.log("SCRIPT V3 LOADED");
+console.log("Cards:", document.querySelectorAll(".card").length);
+console.log("Reader:", document.querySelector("#inlineReader"));
