@@ -20,11 +20,13 @@ const esc = s =>
 
 /* =========================================
    ADS
+   NO LAZY LOAD
+   NO EXTRA GAPS
 ========================================= */
 
 
 /* =========================================
-   300x250
+   300x250 AD
 ========================================= */
 
 function createAd300x250(container) {
@@ -36,8 +38,17 @@ function createAd300x250(container) {
     document.createElement("div");
 
 
-  wrapper.className =
-    "ad-wrapper ad-300";
+  wrapper.style.cssText = `
+    width:100%;
+    max-width:300px;
+    height:250px;
+    margin:0 auto;
+    padding:0;
+    line-height:0;
+    text-align:center;
+    overflow:hidden;
+    display:block;
+  `;
 
 
   const options =
@@ -75,7 +86,7 @@ function createAd300x250(container) {
 
 
 /* =========================================
-   728x90
+   728x90 AD
 ========================================= */
 
 function createAd728x90(container) {
@@ -87,8 +98,17 @@ function createAd728x90(container) {
     document.createElement("div");
 
 
-  wrapper.className =
-    "ad-wrapper ad-728";
+  wrapper.style.cssText = `
+    width:100%;
+    max-width:728px;
+    height:90px;
+    margin:0 auto;
+    padding:0;
+    line-height:0;
+    text-align:center;
+    overflow:hidden;
+    display:block;
+  `;
 
 
   const options =
@@ -126,23 +146,8 @@ function createAd728x90(container) {
 
 
 /* =========================================
-   CREATE ONE AD PAIR
-========================================= */
-
-function createAdPair(container) {
-
-  if (!container) return;
-
-
-  createAd300x250(container);
-
-  createAd728x90(container);
-
-}
-
-
-/* =========================================
-   LOAD 3 + 3 ADS
+   LOAD 3 x 300 + 3 x 728 ADS
+   NO EXTRA GAP
 ========================================= */
 
 function loadBannerAds(container) {
@@ -153,24 +158,28 @@ function loadBannerAds(container) {
   container.innerHTML = "";
 
 
-  /*
-     3 groups
+  container.style.cssText = `
+    width:100%;
+    margin:0;
+    padding:0;
+    line-height:0;
+    text-align:center;
+    display:block;
+  `;
 
-     Group 1:
-     300 + 728
 
-     Group 2:
-     300 + 728
+  /* 300x250 ADS */
 
-     Group 3:
-     300 + 728
-  */
+  createAd300x250(container);
+  createAd300x250(container);
+  createAd300x250(container);
 
-  createAdPair(container);
 
-  createAdPair(container);
+  /* 728x90 ADS */
 
-  createAdPair(container);
+  createAd728x90(container);
+  createAd728x90(container);
+  createAd728x90(container);
 
 }
 
@@ -232,131 +241,7 @@ async function load() {
 
 
 /* =========================================
-   CREATE POST CARD
-========================================= */
-
-function createPostCard(post, index) {
-
-  const slug =
-    String(post.slug || "");
-
-
-  const card =
-    document.createElement(
-      "article"
-    );
-
-
-  card.className =
-    "card";
-
-
-  card.dataset.slug =
-    slug;
-
-
-  card.style.cursor =
-    "pointer";
-
-
-  card.innerHTML = `
-
-    <div
-      class="cover"
-      style="
-        background:linear-gradient(
-          145deg,
-          #${
-            [
-              "71323e",
-              "174e82",
-              "68452a",
-              "4b2a70"
-            ][index % 4]
-          },
-          #071321
-        )
-      "
-    >
-
-      ${
-        post.cover
-
-          ? `
-
-            <img
-              src="${esc(post.cover)}"
-              alt="${esc(post.title)}"
-              decoding="async"
-            >
-
-          `
-
-          : `
-
-            <div class="cover-placeholder">
-
-              ${esc(
-                post.manga ||
-                post.title
-              )}
-
-            </div>
-
-          `
-      }
-
-    </div>
-
-
-    <div class="body">
-
-      <h3>
-        ${esc(post.title)}
-      </h3>
-
-
-      <div class="meta">
-
-        ${esc(post.chapter || "")}
-
-        · ◉
-
-        ${esc(post.views || "0")}
-
-      </div>
-
-
-      <div class="meta rating">
-
-        ★
-
-        ${esc(post.rating || "")}
-
-      </div>
-
-    </div>
-
-  `;
-
-
-  card.addEventListener(
-    "click",
-    function () {
-
-      openPost(slug);
-
-    }
-  );
-
-
-  return card;
-
-}
-
-
-/* =========================================
-   RENDER
+   RENDER POSTS
 ========================================= */
 
 function render(list) {
@@ -384,10 +269,8 @@ function render(list) {
   }
 
 
-  /*
-     Close opened reader
-     when search/filter changes.
-  */
+  /* Close opened post when
+     search/filter changes */
 
   if (reader) {
 
@@ -411,7 +294,12 @@ function render(list) {
 
     latest.innerHTML = `
 
-      <p class="empty-posts">
+      <p
+        style="
+          padding:20px;
+          color:#91a5bd;
+        "
+      >
 
         まだ投稿がありません。
 
@@ -422,19 +310,152 @@ function render(list) {
 
     renderRanking([]);
 
+
     return;
 
   }
 
 
+  /* =====================================
+     CREATE POST CARDS ONLY
+     
+     Reader remains ABOVE #latest.
+  ===================================== */
+
   list.forEach(
     (post, index) => {
 
-      const card =
-        createPostCard(
-          post,
-          index
+      const slug =
+        String(
+          post.slug || ""
         );
+
+
+      const card =
+        document.createElement(
+          "article"
+        );
+
+
+      card.className =
+        "card";
+
+
+      card.style.cursor =
+        "pointer";
+
+
+      card.dataset.slug =
+        slug;
+
+
+      card.innerHTML = `
+
+        <div
+          class="cover"
+          style="
+            background:linear-gradient(
+              145deg,
+              #${
+                [
+                  "71323e",
+                  "174e82",
+                  "68452a",
+                  "4b2a70"
+                ][
+                  index % 4
+                ]
+              },
+              #071321
+            )
+          "
+        >
+
+          ${
+            post.cover
+
+              ? `
+
+                <img
+                  src="${esc(
+                    post.cover
+                  )}"
+                  alt="${esc(
+                    post.title
+                  )}"
+                  decoding="async"
+                >
+
+              `
+
+              : `
+
+                <div
+                  class="cover-placeholder"
+                >
+
+                  ${esc(
+                    post.manga ||
+                    post.title
+                  )}
+
+                </div>
+
+              `
+          }
+
+        </div>
+
+
+        <div class="body">
+
+          <h3>
+
+            ${esc(
+              post.title
+            )}
+
+          </h3>
+
+
+          <div class="meta">
+
+            ${esc(
+              post.chapter || ""
+            )}
+
+            · ◉
+
+            ${esc(
+              post.views || "0"
+            )}
+
+          </div>
+
+
+          <div class="meta rating">
+
+            ★
+
+            ${esc(
+              post.rating || ""
+            )}
+
+          </div>
+
+        </div>
+
+      `;
+
+
+      card.addEventListener(
+        "click",
+        function () {
+
+          openPost(slug);
+
+        }
+      );
 
 
       latest.appendChild(card);
@@ -491,25 +512,27 @@ function openPost(slug) {
   }
 
 
-  /* =======================================
-     SAME POST = CLOSE
-  ======================================= */
+  /* =====================================
+     IF SAME POST IS ALREADY OPEN
+  ===================================== */
 
   if (
-    reader.style.display === "block" &&
-    reader.dataset.slug === String(slug)
+    reader.style.display ===
+      "block" &&
+    reader.dataset.slug ===
+      String(slug)
   ) {
 
-    closePost();
+    closePost(slug);
 
     return;
 
   }
 
 
-  /* =======================================
+  /* =====================================
      DATA
-  ======================================= */
+  ===================================== */
 
   const title =
     esc(
@@ -542,14 +565,16 @@ function openPost(slug) {
 
 
   const images =
-    Array.isArray(post.images)
+    Array.isArray(
+      post.images
+    )
       ? post.images
       : [];
 
 
-  /* =======================================
+  /* =====================================
      COVER
-  ======================================= */
+  ===================================== */
 
   let coverHTML =
     "";
@@ -559,12 +584,30 @@ function openPost(slug) {
 
     coverHTML = `
 
-      <div class="reader-cover">
+      <div
+        style="
+          width:100%;
+          text-align:center;
+          margin:0;
+          padding:0;
+          line-height:0;
+        "
+      >
 
         <img
-          src="${esc(post.cover)}"
+          src="${esc(
+            post.cover
+          )}"
           alt="${title}"
           decoding="async"
+          style="
+            display:block;
+            width:100%;
+            max-width:900px;
+            height:auto;
+            margin:0 auto;
+            border-radius:8px;
+          "
         >
 
       </div>
@@ -574,9 +617,11 @@ function openPost(slug) {
   }
 
 
-  /* =======================================
-     BUILD IMAGE HTML
-  ======================================= */
+  /* =====================================
+     CHAPTER IMAGES
+     
+     NO LAZY LOAD
+  ===================================== */
 
   let imageHTML =
     "";
@@ -587,17 +632,44 @@ function openPost(slug) {
 
       imageHTML += `
 
-        <figure class="chapter-image">
+        <figure
+          style="
+            margin:0;
+            padding:0;
+            width:100%;
+            text-align:center;
+            line-height:0;
+          "
+        >
 
           <img
-            src="${esc(path)}"
+            src="${esc(
+              path
+            )}"
             alt="${title} - Page ${
               index + 1
             }"
             decoding="async"
+            style="
+              display:block;
+              width:100%;
+              max-width:100%;
+              height:auto;
+              margin:0;
+              padding:0;
+              border-radius:7px;
+            "
           >
 
-          <figcaption>
+          <figcaption
+            style="
+              margin:0;
+              padding:4px 0;
+              font-size:11px;
+              line-height:1.3;
+              color:#8197ae;
+            "
+          >
 
             ${title}
             - Page ${index + 1}
@@ -612,57 +684,11 @@ function openPost(slug) {
   );
 
 
-  /* =======================================
-     SPLIT IMAGES INTO 3 PARTS
+  /* =====================================
+     OPEN FULL WIDTH READER
      
-     ADS WILL APPEAR BETWEEN CONTENT.
-  ======================================= */
-
-  const total =
-    images.length;
-
-
-  const partSize =
-    Math.max(
-      1,
-      Math.ceil(total / 3)
-    );
-
-
-  let parts = [];
-
-
-  for (
-    let i = 0;
-    i < total;
-    i += partSize
-  ) {
-
-    parts.push(
-      imageHTMLFromRange(
-        images,
-        i,
-        Math.min(
-          i + partSize,
-          total
-        ),
-        title
-      )
-    );
-
-  }
-
-
-  while (parts.length < 3) {
-
-    parts.push("");
-
-  }
-
-
-  /* =======================================
-     READER
-  ======================================= */
+     Reader is ABOVE #latest.
+  ===================================== */
 
   reader.dataset.slug =
     String(slug);
@@ -672,19 +698,56 @@ function openPost(slug) {
     "block";
 
 
+  reader.style.width =
+    "100%";
+
+
+  reader.style.maxWidth =
+    "100%";
+
+
+  reader.style.boxSizing =
+    "border-box";
+
+
+  reader.style.margin =
+    "0";
+
+
+  reader.style.padding =
+    "0";
+
+
   reader.innerHTML = `
 
-    <section class="reader-panel">
+    <section
+      class="panel"
+      style="
+        width:100%;
+        max-width:100%;
+        margin:0;
+        padding:0;
+        overflow:hidden;
+        box-sizing:border-box;
+      "
+    >
 
 
-      <!-- ================================
+      <!-- =========================
            POST HEADER
-      ================================= -->
+      ========================== -->
 
-      <div class="reader-heading">
+      <div
+        class="heading"
+        style="
+          padding:20px;
+        "
+      >
 
         <h1>
+
           ${title}
+
         </h1>
 
 
@@ -711,16 +774,30 @@ function openPost(slug) {
       </div>
 
 
-      <!-- ================================
-           READER BODY
-      ================================= -->
+      <!-- =========================
+           POST CONTENT
+      ========================== -->
 
-      <div class="reader-body">
+      <div
+        style="
+          width:100%;
+          padding:18px;
+          box-sizing:border-box;
+        "
+      >
 
 
         <!-- DESCRIPTION -->
 
-        <div class="reader-description">
+        <div
+          style="
+            margin:0;
+            padding:0;
+            color:#91a5bd;
+            font-size:13px;
+            line-height:1.8;
+          "
+        >
 
           <p>
 
@@ -748,75 +825,54 @@ function openPost(slug) {
         ${coverHTML}
 
 
-        <!-- ================================
-             IMAGE PART 1
-        ================================= -->
+        <!-- CHAPTER IMAGES -->
 
-        <div class="reader-images">
-
-          ${parts[0]}
-
-        </div>
+        ${imageHTML}
 
 
-        <!-- ================================
-             ADS GROUP 1
-        ================================= -->
+        <!-- =========================
+             POST ADS
+             3 x 300
+             3 x 728
+
+             NO EXTRA GAP
+        ========================== -->
 
         <div
-          class="reader-ads ads-group-1"
+          class="inline-post-ads"
+          style="
+            width:100%;
+            margin:0;
+            padding:0;
+            line-height:0;
+            text-align:center;
+          "
         ></div>
 
 
-        <!-- ================================
-             IMAGE PART 2
-        ================================= -->
-
-        <div class="reader-images">
-
-          ${parts[1]}
-
-        </div>
-
-
-        <!-- ================================
-             ADS GROUP 2
-        ================================= -->
-
-        <div
-          class="reader-ads ads-group-2"
-        ></div>
-
-
-        <!-- ================================
-             IMAGE PART 3
-        ================================= -->
-
-        <div class="reader-images">
-
-          ${parts[2]}
-
-        </div>
-
-
-        <!-- ================================
-             ADS GROUP 3
-        ================================= -->
-
-        <div
-          class="reader-ads ads-group-3"
-        ></div>
-
-
-        <!-- ================================
+        <!-- =========================
              CLOSE
-        ================================= -->
+        ========================== -->
 
-        <div class="reader-close">
+        <div
+          style="
+            text-align:center;
+            margin:0;
+            padding:10px 0 20px;
+          "
+        >
 
           <button
             type="button"
-            id="closeReaderButton"
+            class="close-inline-post"
+            style="
+              padding:10px 20px;
+              border:1px solid #24415f;
+              border-radius:8px;
+              background:transparent;
+              color:#d6e4f3;
+              cursor:pointer;
+            "
           >
 
             ✕ 閉じる
@@ -833,32 +889,32 @@ function openPost(slug) {
   `;
 
 
-  /* =======================================
-     LOAD 3 + 3 ADS
-  ======================================= */
+  /* =====================================
+     LOAD POST ADS
+  ===================================== */
 
-  const adGroups =
-    reader.querySelectorAll(
-      ".reader-ads"
+  const postAds =
+    reader.querySelector(
+      ".inline-post-ads"
     );
 
 
-  adGroups.forEach(
-    group => {
+  if (postAds) {
 
-      loadBannerAds(group);
+    loadBannerAds(
+      postAds
+    );
 
-    }
-  );
+  }
 
 
-  /* =======================================
+  /* =====================================
      CLOSE BUTTON
-  ======================================= */
+  ===================================== */
 
   const closeButton =
-    document.querySelector(
-      "#closeReaderButton"
+    reader.querySelector(
+      ".close-inline-post"
     );
 
 
@@ -870,7 +926,7 @@ function openPost(slug) {
 
         event.stopPropagation();
 
-        closePost();
+        closePost(slug);
 
       }
     );
@@ -878,9 +934,9 @@ function openPost(slug) {
   }
 
 
-  /* =======================================
-     SCROLL TO READER
-  ======================================= */
+  /* =====================================
+     SCROLL TO TOP OF OPENED POST
+  ===================================== */
 
   setTimeout(
     () => {
@@ -891,63 +947,8 @@ function openPost(slug) {
       });
 
     },
-    50
+    80
   );
-
-}
-
-
-/* =========================================
-   CREATE IMAGES FOR RANGE
-========================================= */
-
-function imageHTMLFromRange(
-  images,
-  start,
-  end,
-  title
-) {
-
-  let html = "";
-
-
-  for (
-    let i = start;
-    i < end;
-    i++
-  ) {
-
-    const path =
-      images[i];
-
-
-    html += `
-
-      <figure class="chapter-image">
-
-        <img
-          src="${esc(path)}"
-          alt="${title} - Page ${
-            i + 1
-          }"
-          decoding="async"
-        >
-
-        <figcaption>
-
-          ${title}
-          - Page ${i + 1}
-
-        </figcaption>
-
-      </figure>
-
-    `;
-
-  }
-
-
-  return html;
 
 }
 
@@ -956,7 +957,7 @@ function imageHTMLFromRange(
    CLOSE POST
 ========================================= */
 
-function closePost() {
+function closePost(slug) {
 
   const reader =
     document.querySelector(
@@ -977,6 +978,7 @@ function closePost() {
 
   reader.dataset.slug =
     "";
+
 
 }
 
@@ -1012,7 +1014,12 @@ function renderRanking(list) {
 
             <div
               class="rank"
-              data-slug="${esc(slug)}"
+              data-slug="${esc(
+                slug
+              )}"
+              style="
+                cursor:pointer;
+              "
             >
 
               <div class="num">
@@ -1036,7 +1043,6 @@ function renderRanking(list) {
                         alt="${esc(
                           post.title
                         )}"
-                        decoding="async"
                       >
 
                     `
@@ -1050,7 +1056,7 @@ function renderRanking(list) {
               </div>
 
 
-              <div class="rank-info">
+              <div>
 
                 <div class="rname">
 
@@ -1089,8 +1095,14 @@ function renderRanking(list) {
       .join("");
 
 
+  /* =====================================
+     RANKING CLICK
+  ===================================== */
+
   rank
-    .querySelectorAll(".rank")
+    .querySelectorAll(
+      ".rank"
+    )
     .forEach(
       element => {
 
@@ -1115,16 +1127,13 @@ function renderRanking(list) {
    SEARCH
 ========================================= */
 
-function setupSearch() {
-
-  const searchInput =
-    document.querySelector(
-      "#q"
-    );
+const searchInput =
+  document.querySelector(
+    "#q"
+  );
 
 
-  if (!searchInput) return;
-
+if (searchInput) {
 
   searchInput.addEventListener(
     "input",
@@ -1173,62 +1182,89 @@ function setupSearch() {
    GENRE TABS
 ========================================= */
 
-function setupTabs() {
+document
+  .querySelectorAll(
+    ".tabs button"
+  )
+  .forEach(
+    button => {
 
-  document
-    .querySelectorAll(
-      ".tabs button"
-    )
-    .forEach(
-      button => {
+      button.addEventListener(
+        "click",
+        function () {
 
-        button.addEventListener(
-          "click",
-          function () {
-
-
-            document
-              .querySelectorAll(
-                ".tabs button"
-              )
-              .forEach(
-                x =>
-                  x.classList.remove(
-                    "on"
-                  )
-              );
-
-
-            button.classList.add(
-              "on"
+          document
+            .querySelectorAll(
+              ".tabs button"
+            )
+            .forEach(
+              x =>
+                x.classList.remove(
+                  "on"
+                )
             );
 
 
-            const genre =
-              button.dataset.g;
+          button.classList.add(
+            "on"
+          );
 
 
-            const filtered =
-              genre === "all"
-
-                ? posts
-
-                : posts.filter(
-                    post =>
-                      post.genre ===
-                      genre
-                  );
+          const genre =
+            button.dataset.g;
 
 
-            render(
-              filtered
-            );
+          const filtered =
+            genre === "all"
 
-          }
-        );
+              ? posts
 
-      }
+              : posts.filter(
+                  post =>
+                    post.genre ===
+                    genre
+                );
+
+
+          render(
+            filtered
+          );
+
+        }
+      );
+
+    }
+  );
+
+
+/* =========================================
+   HOMEPAGE ADS
+========================================= */
+
+function loadHomepageAds() {
+
+  const homepageAds =
+    document.querySelector(
+      "#homepageAds"
     );
+
+
+  if (!homepageAds) return;
+
+
+  homepageAds.style.cssText = `
+    width:100%;
+    margin:0;
+    padding:0;
+    line-height:0;
+    text-align:center;
+    display:block;
+  `;
+
+
+  loadBannerAds(
+    homepageAds
+  );
 
 }
 
@@ -1237,17 +1273,6 @@ function setupTabs() {
    START
 ========================================= */
 
-function start() {
-
-  setupSearch();
-
-  setupTabs();
-
-  load();
-
-}
-
-
 if (
   document.readyState ===
   "loading"
@@ -1255,11 +1280,19 @@ if (
 
   document.addEventListener(
     "DOMContentLoaded",
-    start
+    function () {
+
+      loadHomepageAds();
+
+      load();
+
+    }
   );
 
 } else {
 
-  start();
+  loadHomepageAds();
+
+  load();
 
 }
