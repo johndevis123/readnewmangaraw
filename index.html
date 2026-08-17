@@ -44,16 +44,17 @@ function gtag() {
 }
 
 gtag(
-  "js",
+  'js',
   new Date()
 );
 
 gtag(
-  "config",
-  "G-LL2BH8VT9Q"
+  'config',
+  'G-LL2BH8VT9Q'
 );
 
 </script>
+
 
 </head>
 
@@ -63,7 +64,7 @@ gtag(
 
 <!-- =========================================
      SOCIAL BAR
-     ONLY ONCE
+     LOAD ONCE ONLY
 ========================================= -->
 
 <script
@@ -159,17 +160,19 @@ gtag(
      HOMEPAGE ADS
      
      IMPORTANT:
-     No fixed height.
-     JS inserts ads here.
+     No fixed 900px width.
+     No extra padding.
+     No extra blank space.
 ========================================= -->
 
 <div
   id="homepageAds"
   style="
     width:100%;
-    max-width:900px;
-    margin:20px auto;
+    margin:0;
+    padding:0;
     text-align:center;
+    line-height:0;
   "
 ></div>
 
@@ -246,18 +249,16 @@ gtag(
 
 
 <!-- =========================================
-     SEO AREA
+     SEO LATEST
 ========================================= -->
 
-<div id="seoLatest"></div>
+<div
+  id="seoLatest"
+></div>
 
 
 <!-- =========================================
-     POSTS GRID
-
-     IMPORTANT:
-     JS puts opened post directly
-     after clicked card.
+     POSTS
 ========================================= -->
 
 <div
@@ -292,7 +293,9 @@ gtag(
 </div>
 
 
-<div id="rank"></div>
+<div
+  id="rank"
+></div>
 
 
 </aside>
@@ -321,7 +324,7 @@ gtag(
 ========================================= -->
 
 <script
-  src="script.js?v=2000"
+  src="script.js?v=1000"
 ></script>
 
 
