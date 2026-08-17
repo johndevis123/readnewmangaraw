@@ -12,7 +12,7 @@ const esc = s =>
       "&": "&amp;",
       "<": "&lt;",
       ">": "&gt;",
-      '"': "&#039;",
+      '"': "&quot;",
       "'": "&#039;"
     }[m])
   );
@@ -24,12 +24,9 @@ const esc = s =>
 
 function createAd300x250(container) {
 
-  if (!container) {
-    return;
-  }
+  if (!container) return;
 
-  const wrapper =
-    document.createElement("div");
+  const wrapper = document.createElement("div");
 
   wrapper.style.cssText = `
     width:100%;
@@ -39,8 +36,7 @@ function createAd300x250(container) {
     overflow:hidden;
   `;
 
-  const options =
-    document.createElement("script");
+  const options = document.createElement("script");
 
   options.textContent = `
     atOptions = {
@@ -52,8 +48,7 @@ function createAd300x250(container) {
     };
   `;
 
-  const script =
-    document.createElement("script");
+  const script = document.createElement("script");
 
   script.src =
     "https://www.highperformanceformat.com/a8a805cc341bb0537e9ecf27dd55a271/invoke.js";
@@ -73,12 +68,9 @@ function createAd300x250(container) {
 
 function createAd728x90(container) {
 
-  if (!container) {
-    return;
-  }
+  if (!container) return;
 
-  const wrapper =
-    document.createElement("div");
+  const wrapper = document.createElement("div");
 
   wrapper.style.cssText = `
     width:100%;
@@ -88,8 +80,7 @@ function createAd728x90(container) {
     overflow:hidden;
   `;
 
-  const options =
-    document.createElement("script");
+  const options = document.createElement("script");
 
   options.textContent = `
     atOptions = {
@@ -101,8 +92,7 @@ function createAd728x90(container) {
     };
   `;
 
-  const script =
-    document.createElement("script");
+  const script = document.createElement("script");
 
   script.src =
     "https://www.highperformanceformat.com/ce956904ebd6d4f505c512d6335bafb6/invoke.js";
@@ -117,19 +107,16 @@ function createAd728x90(container) {
 
 
 /* =========================================
-   LOAD TWO BANNER ADS
+   LOAD BANNER ADS
 ========================================= */
 
 function loadBannerAds(container) {
 
-  if (!container) {
-    return;
-  }
+  if (!container) return;
 
   container.innerHTML = "";
 
   createAd300x250(container);
-
   createAd728x90(container);
 }
 
@@ -142,14 +129,12 @@ async function load() {
 
   try {
 
-    const response =
-      await fetch(
-        "data/posts.json?v=" +
-        Date.now(),
-        {
-          cache: "no-store"
-        }
-      );
+    const response = await fetch(
+      "data/posts.json?v=" + Date.now(),
+      {
+        cache: "no-store"
+      }
+    );
 
     if (!response.ok) {
 
@@ -160,8 +145,7 @@ async function load() {
 
     }
 
-    const data =
-      await response.json();
+    const data = await response.json();
 
     posts =
       Array.isArray(data.posts)
@@ -194,9 +178,7 @@ function render(list) {
 
   if (!latest) {
 
-    console.error(
-      "#latest not found"
-    );
+    console.error("#latest not found");
 
     return;
 
@@ -204,19 +186,18 @@ function render(list) {
 
   latest.innerHTML = "";
 
+  latest.classList.remove("post-is-open");
+
+
   if (!list.length) {
 
     latest.innerHTML = `
-
-      <p
-        style="
-          padding:20px;
-          color:#91a5bd;
-        "
-      >
+      <p style="
+        padding:20px;
+        color:#91a5bd;
+      ">
         まだ投稿がありません。
       </p>
-
     `;
 
     renderRanking([]);
@@ -225,210 +206,161 @@ function render(list) {
   }
 
 
-  /* =======================================
-     CREATE EACH POST
-  ======================================= */
+  list.forEach((post, index) => {
 
-  list.forEach(
-    (post, index) => {
-
-      const slug =
-        String(
-          post.slug || ""
-        );
+    const slug =
+      String(post.slug || "");
 
 
-      /* =====================================
-         POST WRAPPER
+    /* ===================================
+       POST CARD
+    =================================== */
 
-         Card + reader are inside SAME
-         wrapper so reader opens directly
-         below its own card.
-      ===================================== */
+    const card =
+      document.createElement("article");
 
-      const wrapper =
-        document.createElement("div");
+    card.className = "card";
 
-      wrapper.className =
-        "post-wrapper";
+    card.style.cursor = "pointer";
 
-      wrapper.dataset.slug =
-        slug;
-
-      wrapper.style.cssText = `
-        width:100%;
-        min-width:0;
-      `;
+    card.dataset.slug = slug;
 
 
-      /* =====================================
-         POST CARD
-      ===================================== */
+    card.innerHTML = `
 
-      const card =
-        document.createElement(
-          "article"
-        );
+      <div
+        class="cover"
+        style="
+          background:linear-gradient(
+            145deg,
+            #${
+              [
+                "71323e",
+                "174e82",
+                "68452a",
+                "4b2a70"
+              ][index % 4]
+            },
+            #071321
+          )
+        "
+      >
 
-      card.className =
-        "card";
+        ${
+          post.cover
 
-      card.style.cursor =
-        "pointer";
+            ? `
+              <img
+                src="${esc(post.cover)}"
+                alt="${esc(post.title)}"
+                loading="lazy"
+                decoding="async"
+              >
+            `
 
-      card.dataset.slug =
-        slug;
-
-
-      card.innerHTML = `
-
-        <div
-          class="cover"
-          style="
-            background:linear-gradient(
-              145deg,
-              #${
-                [
-                  "71323e",
-                  "174e82",
-                  "68452a",
-                  "4b2a70"
-                ][
-                  index % 4
-                ]
-              },
-              #071321
-            )
-          "
-        >
-
-          ${
-            post.cover
-
-              ? `
-
-                <img
-                  src="${esc(post.cover)}"
-                  alt="${esc(post.title)}"
-                  loading="lazy"
-                  decoding="async"
-                >
-
-              `
-
-              : `
-
-                <div
-                  class="cover-placeholder"
-                >
-
-                  ${esc(
-                    post.manga ||
-                    post.title
-                  )}
-
-                </div>
-
-              `
-          }
-
-        </div>
-
-
-        <div class="body">
-
-          <h3>
-            ${esc(
-              post.title
-            )}
-          </h3>
-
-
-          <div class="meta">
-
-            ${esc(
-              post.chapter || ""
-            )}
-
-            · ◉
-
-            ${esc(
-              post.views || "0"
-            )}
-
-          </div>
-
-
-          <div class="meta rating">
-
-            ★
-
-            ${esc(
-              post.rating || ""
-            )}
-
-          </div>
-
-        </div>
-
-      `;
-
-
-      /* =====================================
-         INLINE READER
-      ===================================== */
-
-      const box =
-        document.createElement(
-          "div"
-        );
-
-      box.className =
-        "inline-post";
-
-      box.id =
-        "post-" + slug;
-
-      box.style.display =
-        "none";
-
-      box.style.width =
-        "100%";
-
-      box.style.gridColumn =
-        "1 / -1";
-
-
-      /* =====================================
-         CARD CLICK
-      ===================================== */
-
-      card.addEventListener(
-        "click",
-        function () {
-
-          openPost(slug);
-
+            : `
+              <div class="cover-placeholder">
+                ${esc(
+                  post.manga ||
+                  post.title
+                )}
+              </div>
+            `
         }
-      );
+
+      </div>
 
 
-      /* =====================================
-         ADD CARD + READER TO WRAPPER
-      ===================================== */
+      <div class="body">
 
-      wrapper.appendChild(card);
+        <h3>
+          ${esc(post.title)}
+        </h3>
 
-      wrapper.appendChild(box);
 
-      latest.appendChild(wrapper);
+        <div class="meta">
 
-    }
-  );
+          ${esc(
+            post.chapter || ""
+          )}
+
+          · ◉
+
+          ${esc(
+            post.views || "0"
+          )}
+
+        </div>
+
+
+        <div class="meta rating">
+
+          ★
+
+          ${esc(
+            post.rating || ""
+          )}
+
+        </div>
+
+      </div>
+
+    `;
+
+
+    /* ===================================
+       CARD CLICK
+    =================================== */
+
+    card.addEventListener(
+      "click",
+      function () {
+
+        openPost(slug);
+
+      }
+    );
+
+
+    latest.appendChild(card);
+
+
+    /* ===================================
+       INLINE POST CONTAINER
+       
+       IMPORTANT:
+       This container stays immediately
+       after its card.
+    =================================== */
+
+    const box =
+      document.createElement("div");
+
+    box.className =
+      "inline-post";
+
+    box.id =
+      "post-" + slug;
+
+    box.style.display =
+      "none";
+
+    box.style.width =
+      "100%";
+
+    box.style.gridColumn =
+      "1 / -1";
+
+    box.style.boxSizing =
+      "border-box";
+
+
+    latest.appendChild(box);
+
+  });
 
 
   renderRanking(list);
-
 }
 
 
@@ -454,7 +386,6 @@ function openPost(slug) {
     );
 
     return;
-
   }
 
 
@@ -472,8 +403,11 @@ function openPost(slug) {
     );
 
     return;
-
   }
+
+
+  const latest =
+    document.querySelector("#latest");
 
 
   /* =====================================
@@ -481,26 +415,19 @@ function openPost(slug) {
   ===================================== */
 
   document
-    .querySelectorAll(
-      ".inline-post"
-    )
-    .forEach(
-      element => {
+    .querySelectorAll(".inline-post")
+    .forEach(element => {
 
-        if (
-          element !== box
-        ) {
+      if (element !== box) {
 
-          element.style.display =
-            "none";
+        element.style.display =
+          "none";
 
-          element.innerHTML =
-            "";
-
-        }
+        element.innerHTML = "";
 
       }
-    );
+
+    });
 
 
   /* =====================================
@@ -508,17 +435,55 @@ function openPost(slug) {
   ===================================== */
 
   if (
-    box.style.display ===
-    "block"
+    box.style.display === "block"
   ) {
 
-    box.style.display =
-      "none";
+    box.style.display = "none";
 
-    box.innerHTML =
-      "";
+    box.innerHTML = "";
+
+    if (latest) {
+
+      latest.classList.remove(
+        "post-is-open"
+      );
+
+    }
 
     return;
+  }
+
+
+  /* =====================================
+     FORCE FULL WIDTH ROW
+     
+     THIS IS THE IMPORTANT FIX
+  ===================================== */
+
+  box.style.display =
+    "block";
+
+  box.style.gridColumn =
+    "1 / -1";
+
+  box.style.gridRow =
+    "auto";
+
+  box.style.width =
+    "100%";
+
+  box.style.maxWidth =
+    "100%";
+
+  box.style.boxSizing =
+    "border-box";
+
+
+  if (latest) {
+
+    latest.classList.add(
+      "post-is-open"
+    );
 
   }
 
@@ -532,30 +497,33 @@ function openPost(slug) {
       post.title || ""
     );
 
+
   const manga =
     esc(
       post.manga || ""
     );
+
 
   const chapter =
     esc(
       post.chapter || ""
     );
 
+
   const genre =
     esc(
       post.genre || ""
     );
+
 
   const rating =
     esc(
       post.rating || "0"
     );
 
+
   const images =
-    Array.isArray(
-      post.images
-    )
+    Array.isArray(post.images)
       ? post.images
       : [];
 
@@ -564,8 +532,8 @@ function openPost(slug) {
      COVER
   ===================================== */
 
-  let coverHTML =
-    "";
+  let coverHTML = "";
+
 
   if (post.cover) {
 
@@ -573,22 +541,21 @@ function openPost(slug) {
 
       <div
         style="
+          width:100%;
           text-align:center;
           margin:0 0 25px;
         "
       >
 
         <img
-          src="${esc(
-            post.cover
-          )}"
+          src="${esc(post.cover)}"
           alt="${title}"
           loading="lazy"
           decoding="async"
           style="
             display:block;
             width:100%;
-            max-width:700px;
+            max-width:900px;
             height:auto;
             margin:0 auto;
             border-radius:8px;
@@ -606,8 +573,8 @@ function openPost(slug) {
      CHAPTER IMAGES
   ===================================== */
 
-  let imageHTML =
-    "";
+  let imageHTML = "";
+
 
   images.forEach(
     (path, index) => {
@@ -618,6 +585,7 @@ function openPost(slug) {
           style="
             margin:0 0 20px;
             padding:0;
+            width:100%;
             text-align:center;
           "
         >
@@ -661,7 +629,7 @@ function openPost(slug) {
 
 
   /* =====================================
-     INLINE POST CONTENT
+     INLINE POST
   ===================================== */
 
   box.innerHTML = `
@@ -669,11 +637,15 @@ function openPost(slug) {
     <section
       class="panel"
       style="
+        width:100%;
+        max-width:100%;
         margin:18px 0 25px;
         padding:0;
         overflow:hidden;
+        box-sizing:border-box;
       "
     >
+
 
       <div
         class="heading"
@@ -714,7 +686,9 @@ function openPost(slug) {
 
       <div
         style="
+          width:100%;
           padding:18px;
+          box-sizing:border-box;
         "
       >
 
@@ -820,6 +794,7 @@ function openPost(slug) {
       ".inline-post-ads"
     );
 
+
   if (postAds) {
 
     loadBannerAds(
@@ -856,14 +831,6 @@ function openPost(slug) {
 
 
   /* =====================================
-     SHOW POST
-  ===================================== */
-
-  box.style.display =
-    "block";
-
-
-  /* =====================================
      SCROLL TO POST
   ===================================== */
 
@@ -876,7 +843,7 @@ function openPost(slug) {
       });
 
     },
-    50
+    80
   );
 
 }
@@ -894,11 +861,7 @@ function closePost(slug) {
     );
 
 
-  if (!box) {
-
-    return;
-
-  }
+  if (!box) return;
 
 
   box.style.display =
@@ -906,6 +869,19 @@ function closePost(slug) {
 
   box.innerHTML =
     "";
+
+
+  const latest =
+    document.querySelector("#latest");
+
+
+  if (latest) {
+
+    latest.classList.remove(
+      "post-is-open"
+    );
+
+  }
 
 }
 
@@ -917,16 +893,10 @@ function closePost(slug) {
 function renderRanking(list) {
 
   const rank =
-    document.querySelector(
-      "#rank"
-    );
+    document.querySelector("#rank");
 
 
-  if (!rank) {
-
-    return;
-
-  }
+  if (!rank) return;
 
 
   rank.innerHTML =
@@ -945,9 +915,7 @@ function renderRanking(list) {
 
             <div
               class="rank"
-              data-slug="${esc(
-                slug
-              )}"
+              data-slug="${esc(slug)}"
               style="
                 cursor:pointer;
               "
@@ -1032,25 +1000,21 @@ function renderRanking(list) {
   ===================================== */
 
   rank
-    .querySelectorAll(
-      ".rank"
-    )
-    .forEach(
-      element => {
+    .querySelectorAll(".rank")
+    .forEach(element => {
 
-        element.addEventListener(
-          "click",
-          function () {
+      element.addEventListener(
+        "click",
+        function () {
 
-            openPost(
-              element.dataset.slug
-            );
+          openPost(
+            element.dataset.slug
+          );
 
-          }
-        );
+        }
+      );
 
-      }
-    );
+    });
 
 }
 
@@ -1060,9 +1024,7 @@ function renderRanking(list) {
 ========================================= */
 
 const searchInput =
-  document.querySelector(
-    "#q"
-  );
+  document.querySelector("#q");
 
 
 if (searchInput) {
@@ -1078,31 +1040,27 @@ if (searchInput) {
 
 
       const filtered =
-        posts.filter(
-          post => {
+        posts.filter(post => {
 
-            const text =
+          const text =
 
-              (post.title || "") +
-              " " +
-              (post.manga || "") +
-              " " +
-              (post.chapter || "") +
-              " " +
-              (post.genre || "");
-
-
-            return text
-              .toLowerCase()
-              .includes(q);
-
-          }
-        );
+            (post.title || "") +
+            " " +
+            (post.manga || "") +
+            " " +
+            (post.chapter || "") +
+            " " +
+            (post.genre || "");
 
 
-      render(
-        filtered
-      );
+          return text
+            .toLowerCase()
+            .includes(q);
+
+        });
+
+
+      render(filtered);
 
     }
   );
@@ -1115,58 +1073,48 @@ if (searchInput) {
 ========================================= */
 
 document
-  .querySelectorAll(
-    ".tabs button"
-  )
-  .forEach(
-    button => {
+  .querySelectorAll(".tabs button")
+  .forEach(button => {
 
-      button.addEventListener(
-        "click",
-        function () {
+    button.addEventListener(
+      "click",
+      function () {
 
-          document
-            .querySelectorAll(
-              ".tabs button"
-            )
-            .forEach(
-              x =>
-                x.classList.remove(
-                  "on"
-                )
-            );
-
-
-          button.classList.add(
-            "on"
+        document
+          .querySelectorAll(
+            ".tabs button"
+          )
+          .forEach(
+            x =>
+              x.classList.remove("on")
           );
 
 
-          const genre =
-            button.dataset.g;
+        button.classList.add("on");
 
 
-          const filtered =
-            genre === "all"
-
-              ? posts
-
-              : posts.filter(
-                  post =>
-                    post.genre ===
-                    genre
-                );
+        const genre =
+          button.dataset.g;
 
 
-          render(
-            filtered
-          );
+        const filtered =
+          genre === "all"
 
-        }
-      );
+            ? posts
 
-    }
-  );
+            : posts.filter(
+                post =>
+                  post.genre ===
+                  genre
+              );
+
+
+        render(filtered);
+
+      }
+    );
+
+  });
 
 
 /* =========================================
