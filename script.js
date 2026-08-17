@@ -19,15 +19,17 @@ const esc = s =>
 
 
 /* =========================================
-   ADS
+   300x250 AD
 ========================================= */
 
 function createAd300x250(container) {
 
   if (!container) return;
 
+
   const wrapper =
     document.createElement("div");
+
 
   wrapper.style.cssText = `
     width:100%;
@@ -41,6 +43,7 @@ function createAd300x250(container) {
 
   const options =
     document.createElement("script");
+
 
   options.textContent = `
     atOptions = {
@@ -56,13 +59,16 @@ function createAd300x250(container) {
   const script =
     document.createElement("script");
 
+
   script.src =
     "https://www.highperformanceformat.com/a8a805cc341bb0537e9ecf27dd55a271/invoke.js";
+
 
   script.async = true;
 
 
   wrapper.appendChild(options);
+
   wrapper.appendChild(script);
 
   container.appendChild(wrapper);
@@ -78,8 +84,10 @@ function createAd728x90(container) {
 
   if (!container) return;
 
+
   const wrapper =
     document.createElement("div");
+
 
   wrapper.style.cssText = `
     width:100%;
@@ -93,6 +101,7 @@ function createAd728x90(container) {
 
   const options =
     document.createElement("script");
+
 
   options.textContent = `
     atOptions = {
@@ -108,13 +117,16 @@ function createAd728x90(container) {
   const script =
     document.createElement("script");
 
+
   script.src =
     "https://www.highperformanceformat.com/ce956904ebd6d4f505c512d6335bafb6/invoke.js";
+
 
   script.async = true;
 
 
   wrapper.appendChild(options);
+
   wrapper.appendChild(script);
 
   container.appendChild(wrapper);
@@ -132,10 +144,11 @@ function loadBannerAds(container) {
 
   if (!container) return;
 
+
   container.innerHTML = "";
 
 
-  /* 300x250 — 5 TIMES */
+  /* 300x250 ADS */
 
   for (
     let i = 0;
@@ -143,12 +156,14 @@ function loadBannerAds(container) {
     i++
   ) {
 
-    createAd300x250(container);
+    createAd300x250(
+      container
+    );
 
   }
 
 
-  /* 728x90 — 5 TIMES */
+  /* 728x90 ADS */
 
   for (
     let i = 0;
@@ -156,7 +171,9 @@ function loadBannerAds(container) {
     i++
   ) {
 
-    createAd728x90(container);
+    createAd728x90(
+      container
+    );
 
   }
 
@@ -196,7 +213,9 @@ async function load() {
 
 
     posts =
-      Array.isArray(data.posts)
+      Array.isArray(
+        data.posts
+      )
         ? data.posts
         : [];
 
@@ -243,6 +262,7 @@ function render(list) {
 
 
   latest.innerHTML = "";
+
 
   latest.classList.remove(
     "post-is-open"
@@ -339,7 +359,6 @@ function render(list) {
                   alt="${esc(
                     post.title
                   )}"
-                  loading="lazy"
                   decoding="async"
                 >
 
@@ -526,7 +545,7 @@ function openPost(slug) {
 
 
   /* =====================================
-     CLOSE ALL OTHER POSTS
+     CLOSE OTHER POSTS
   ===================================== */
 
   document
@@ -553,7 +572,7 @@ function openPost(slug) {
 
 
   /* =====================================
-     IF ALREADY OPEN → CLOSE
+     CLOSE IF ALREADY OPEN
   ===================================== */
 
   if (
@@ -569,11 +588,12 @@ function openPost(slug) {
 
 
   /* =====================================
-     IMPORTANT:
-     MOVE OPENED POST TO TOP
+     MOVE POST TO VERY TOP
   ===================================== */
 
-  latest.prepend(box);
+  latest.prepend(
+    box
+  );
 
 
   box.style.display =
@@ -672,7 +692,6 @@ function openPost(slug) {
             post.cover
           )}"
           alt="${title}"
-          loading="lazy"
           decoding="async"
           style="
             display:block;
@@ -693,7 +712,7 @@ function openPost(slug) {
 
   /* =====================================
      CHAPTER IMAGES
-  ===================================== */
+========================================= */
 
   let imageHTML =
     "";
@@ -714,11 +733,12 @@ function openPost(slug) {
         >
 
           <img
-            src="${esc(path)}"
+            src="${esc(
+              path
+            )}"
             alt="${title} - Page ${
               index + 1
             }"
-            loading="lazy"
             decoding="async"
             style="
               display:block;
@@ -874,7 +894,7 @@ function openPost(slug) {
         ></div>
 
 
-        <!-- CLOSE -->
+        <!-- CLOSE BUTTON -->
 
         <div
           style="
@@ -912,7 +932,7 @@ function openPost(slug) {
 
 
   /* =====================================
-     LOAD 10 ADS
+     LOAD POST ADS
   ===================================== */
 
   const postAds =
@@ -957,20 +977,16 @@ function openPost(slug) {
 
 
   /* =====================================
-     SCROLL TO VERY TOP OF OPENED POST
+     SCROLL TO OPENED POST
   ===================================== */
 
   setTimeout(
     () => {
 
-      const headerOffset =
-        10;
-
-
       const position =
         box.getBoundingClientRect().top +
         window.scrollY -
-        headerOffset;
+        10;
 
 
       window.scrollTo({
@@ -1015,7 +1031,7 @@ function closePost(slug) {
 
 
   /* =====================================
-     MOVE BOX BACK AFTER ITS CARD
+     PUT POST BACK AFTER CARD
   ===================================== */
 
   if (
@@ -1116,7 +1132,6 @@ function renderRanking(list) {
                         alt="${esc(
                           post.title
                         )}"
-                        loading="lazy"
                       >
 
                     `
