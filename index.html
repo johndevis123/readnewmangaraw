@@ -15,19 +15,14 @@
   content="width=device-width,initial-scale=1"
 >
 
-<title>
-ReadNewMangaRaw - 最新漫画 Raw
-</title>
+<title>ReadNewMangaRaw - 最新漫画 Raw</title>
 
 <link
   rel="stylesheet"
-  href="style.css"
+  href="style.css?v=2000"
 >
 
-
-<!-- =========================================
-     GOOGLE ANALYTICS
-========================================= -->
+<!-- Google Analytics -->
 
 <script
   async
@@ -40,19 +35,14 @@ window.dataLayer =
   window.dataLayer || [];
 
 function gtag() {
-
   dataLayer.push(arguments);
-
 }
 
-gtag(
-  'js',
-  new Date()
-);
+gtag("js", new Date());
 
 gtag(
-  'config',
-  'G-LL2BH8VT9Q'
+  "config",
+  "G-LL2BH8VT9Q"
 );
 
 </script>
@@ -65,7 +55,6 @@ gtag(
 
 <!-- =========================================
      SOCIAL BAR
-     ONLY ONCE
 ========================================= -->
 
 <script
@@ -80,7 +69,6 @@ gtag(
 <header>
 
 <div class="wrap nav">
-
 
 <a
   class="brand"
@@ -133,7 +121,6 @@ gtag(
 
 </div>
 
-
 </div>
 
 </header>
@@ -154,53 +141,15 @@ gtag(
      MAIN
 ========================================= -->
 
-<main class="wrap">
+<main class="wrap main-layout">
 
 
 <!-- =========================================
-     HOMEPAGE ADS
-
-     IMPORTANT:
-     This is only the ad container.
-     No fixed 900px width.
+     CONTENT
 ========================================= -->
 
-<div
-  id="homepageAds"
-  style="
-    width:100%;
-    margin:0;
-    padding:0;
-    text-align:center;
-  "
-></div>
+<div class="content-area">
 
-
-<!-- =========================================
-     OPENED POST READER
-
-     IMPORTANT:
-     script.js uses this element.
-
-     It is hidden initially.
-========================================= -->
-
-<div
-  id="inlineReader"
-  style="
-    display:none;
-    width:100%;
-    max-width:100%;
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-  "
-></div>
-
-
-<!-- =========================================
-     POSTS PANEL
-========================================= -->
 
 <section class="panel">
 
@@ -224,7 +173,6 @@ gtag(
 
 <div class="tabs">
 
-
 <button
   type="button"
   class="on"
@@ -233,14 +181,12 @@ gtag(
 すべて
 </button>
 
-
 <button
   type="button"
   data-g="アクション"
 >
 アクション
 </button>
-
 
 <button
   type="button"
@@ -249,14 +195,12 @@ gtag(
 ファンタジー
 </button>
 
-
 <button
   type="button"
   data-g="恋愛"
 >
 恋愛
 </button>
-
 
 <button
   type="button"
@@ -265,21 +209,25 @@ gtag(
 スポーツ
 </button>
 
-
 </div>
 
 
 <!-- =========================================
-     SEO LATEST
+     OPENED POST
+     
+     IMPORTANT:
+     Reader is BEFORE cards.
 ========================================= -->
 
 <div
-  id="seoLatest"
+  id="inlineReader"
+  class="inline-reader"
+  style="display:none;"
 ></div>
 
 
 <!-- =========================================
-     POSTS GRID
+     POSTS
 ========================================= -->
 
 <div
@@ -290,13 +238,15 @@ gtag(
 
 </section>
 
+</div>
+
 
 <!-- =========================================
      RANKING
 ========================================= -->
 
 <aside
-  class="panel"
+  class="panel ranking-panel"
   id="ranking"
 >
 
@@ -314,9 +264,7 @@ gtag(
 </div>
 
 
-<div
-  id="rank"
-></div>
+<div id="rank"></div>
 
 
 </aside>
@@ -339,10 +287,6 @@ gtag(
 
 </footer>
 
-
-<!-- =========================================
-     MAIN JAVASCRIPT
-========================================= -->
 
 <script
   src="script.js?v=2000"
