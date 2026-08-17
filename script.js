@@ -1,5 +1,10 @@
 let posts = [];
 
+
+/* =========================================
+   ESCAPE HTML
+========================================= */
+
 const esc = s =>
   String(s ?? "").replace(
     /[&<>"']/g,
@@ -21,39 +26,48 @@ async function load() {
 
   try {
 
-    const r = await fetch(
+    const response = await fetch(
       "data/posts.json?v=" + Date.now(),
       {
         cache: "no-store"
       }
     );
 
-    if (!r.ok) {
+    if (!response.ok) {
+
       throw new Error(
-        "Failed to load posts.json: " + r.status
+        "Failed to load posts.json: " +
+        response.status
       );
+
     }
 
-    const data = await r.json();
+    const data =
+      await response.json();
 
-    posts = Array.isArray(data.posts)
-      ? data.posts
-      : [];
+    posts =
+      Array.isArray(data.posts)
+        ? data.posts
+        : [];
 
-  } catch (e) {
+  } catch (error) {
 
-    console.error("Posts loading error:", e);
+    console.error(
+      "Posts loading error:",
+      error
+    );
 
     posts = [];
 
   }
 
   render(posts);
+
 }
 
 
 /* =========================================
-   RENDER
+   RENDER POSTS
 ========================================= */
 
 function render(list) {
@@ -62,134 +76,174 @@ function render(list) {
     document.querySelector("#latest");
 
   if (!latest) {
-    console.error("#latest not found");
+
+    console.error(
+      "#latest not found"
+    );
+
     return;
+
   }
 
 
-  latest.innerHTML =
-
-    list.map((p, i) => {
-
-      const slug =
-        String(p.slug || "");
+  latest.innerHTML = "";
 
 
-      return `
+  if (!list.length) {
 
-        <article
-          class="card"
-          data-slug="${esc(slug)}"
-          style="cursor:pointer"
-        >
-
-          <div
-            class="cover"
-            style="
-              background:linear-gradient(
-                145deg,
-                #${["71323e","174e82","68452a","4b2a70"][i % 4]},
-                #071321
-              )
-            "
-          >
-
-            ${
-              p.cover
-                ? `
-                  <img
-                    src="${esc(p.cover)}"
-                    alt="${esc(p.title)}"
-                    loading="lazy"
-                    decoding="async"
-                  >
-                `
-                : `
-                  <div class="cover-placeholder">
-                    ${esc(p.manga || p.title)}
-                  </div>
-                `
-            }
-
-          </div>
-
-
-          <div class="body">
-
-            <h3>
-              ${esc(p.title)}
-            </h3>
-
-
-            <div class="meta">
-              ${esc(p.chapter || "")}
-              · ◉
-              ${esc(p.views || "0")}
-            </div>
-
-
-            <div class="meta rating">
-              ★ ${esc(p.rating || "")}
-            </div>
-
-          </div>
-
-        </article>
-
-      `;
-
-    }).join("") ||
-
-    `
+    latest.innerHTML = `
       <p style="
         padding:20px;
-        color:#91a5bd
+        color:#91a5bd;
       ">
         まだ投稿がありません。
       </p>
     `;
 
+    renderRanking([]);
 
-  /* =========================================
-     CLICK EVENTS
-  ========================================= */
+    return;
 
-  latest
-    .querySelectorAll(".card")
-    .forEach(card => {
+  }
 
-      card.addEventListener(
-        "click",
-        function () {
 
-          const slug =
-            this.dataset.slug;
+  list.forEach((post, index) => {
 
-          openPost(slug);
+    const slug =
+      String(post.slug || "");
 
+
+    /* =====================================
+       CARD
+    ===================================== */
+
+    const card =
+      document.createElement("article");
+
+    card.className = "card";
+
+    card.style.cursor = "pointer";
+
+    card.dataset.slug = slug;
+
+
+    card.innerHTML = `
+
+      <div
+        class="cover"
+        style="
+          background:linear-gradient(
+            145deg,
+            #${[
+              "71323e",
+              "174e82",
+              "68452a",
+              "4b2a70"
+            ][index % 4]},
+            #071321
+          )
+        "
+      >
+
+        ${
+          post.cover
+            ? `
+              <img
+                src="${esc(post.cover)}"
+                alt="${esc(post.title)}"
+                loading="lazy"
+                decoding="async"
+              >
+            `
+            : `
+              <div class="cover-placeholder">
+                ${esc(
+                  post.manga ||
+                  post.title
+                )}
+              </div>
+            `
         }
-      );
 
-    });
+      </div>
+
+
+      <div class="body">
+
+        <h3>
+          ${esc(post.title)}
+        </h3>
+
+
+        <div class="meta">
+          ${esc(post.chapter || "")}
+          · ◉
+          ${esc(post.views || "0")}
+        </div>
+
+
+        <div class="meta rating">
+          ★ ${esc(post.rating || "")}
+        </div>
+
+      </div>
+
+    `;
+
+
+    /* =====================================
+       CLICK
+    ===================================== */
+
+    card.addEventListener(
+      "click",
+      function () {
+
+        openPost(slug);
+
+      }
+    );
+
+
+    latest.appendChild(card);
+
+
+    /* =====================================
+       INLINE POST CONTAINER
+    ===================================== */
+
+    const box =
+      document.createElement("div");
+
+    box.className = "inline-post";
+
+    box.id =
+      "post-" + slug;
+
+    box.style.display = "none";
+
+
+    latest.appendChild(box);
+
+  });
 
 
   renderRanking(list);
+
 }
 
 
 /* =========================================
-   OPEN POST INSIDE HOMEPAGE
+   OPEN POST ON SAME PAGE
 ========================================= */
 
 function openPost(slug) {
 
-  console.log("Opening post:", slug);
-
-
   const post =
     posts.find(
       p =>
-        String(p.slug) === String(slug)
+        String(p.slug) ===
+        String(slug)
     );
 
 
@@ -205,14 +259,17 @@ function openPost(slug) {
   }
 
 
-  const reader =
-    document.querySelector("#inlineReader");
+  const box =
+    document.getElementById(
+      "post-" + slug
+    );
 
 
-  if (!reader) {
+  if (!box) {
 
     console.error(
-      "#inlineReader not found in index.html"
+      "Inline post container not found:",
+      slug
     );
 
     return;
@@ -220,43 +277,51 @@ function openPost(slug) {
   }
 
 
-  /* =========================================
-     CLOSE IF SAME POST IS OPEN
-  ========================================= */
+  /* =====================================
+     CLOSE OTHER OPEN POSTS
+  ===================================== */
+
+  document
+    .querySelectorAll(".inline-post")
+    .forEach(element => {
+
+      if (element !== box) {
+
+        element.style.display =
+          "none";
+
+        element.innerHTML = "";
+
+      }
+
+    });
+
+
+  /* =====================================
+     TOGGLE CURRENT POST
+  ===================================== */
 
   if (
-    reader.dataset.slug === String(slug) &&
-    reader.style.display !== "none"
+    box.style.display ===
+    "block"
   ) {
 
-    reader.style.display = "none";
+    box.style.display =
+      "none";
 
-    reader.innerHTML = "";
-
-    reader.removeAttribute("data-slug");
+    box.innerHTML = "";
 
     return;
 
   }
 
 
-  /* =========================================
-     CLOSE OLD READER
-  ========================================= */
-
-  reader.innerHTML = "";
-
-  reader.style.display = "none";
-
-  reader.dataset.slug = String(slug);
-
-
-  /* =========================================
+  /* =====================================
      DATA
-  ========================================= */
+  ===================================== */
 
   const title =
-    esc(post.title);
+    esc(post.title || "");
 
 
   const manga =
@@ -281,52 +346,61 @@ function openPost(slug) {
       : [];
 
 
-  /* =========================================
+  /* =====================================
      COVER
-  ========================================= */
+  ===================================== */
 
-  const coverHTML =
-    post.cover
-      ? `
+  let coverHTML = "";
 
-        <div
+
+  if (post.cover) {
+
+    coverHTML = `
+
+      <div
+        style="
+          text-align:center;
+          margin:0 0 25px;
+        "
+      >
+
+        <img
+          src="${esc(post.cover)}"
+          alt="${title}"
+          loading="lazy"
+          decoding="async"
           style="
-            text-align:center;
-            margin-bottom:25px;
+            display:block;
+            width:100%;
+            max-width:700px;
+            height:auto;
+            margin:0 auto;
+            border-radius:8px;
           "
         >
 
-          <img
-            src="${esc(post.cover)}"
-            alt="${title}"
-            loading="lazy"
-            decoding="async"
-            style="
-              display:block;
-              max-width:100%;
-              height:auto;
-              margin:0 auto;
-              border-radius:8px;
-            "
-          >
+      </div>
 
-        </div>
+    `;
 
-      `
-      : "";
+  }
 
 
-  /* =========================================
+  /* =====================================
      CHAPTER IMAGES
-  ========================================= */
+  ===================================== */
 
-  const imageHTML =
-    images.map(
-      (path, index) => `
+  let imageHTML = "";
+
+
+  images.forEach(
+    (path, index) => {
+
+      imageHTML += `
 
         <figure
           style="
-            margin:0 0 22px;
+            margin:0 0 20px;
             padding:0;
             text-align:center;
           "
@@ -354,29 +428,35 @@ function openPost(slug) {
               color:#8197ae;
             "
           >
-            ${title} - Page ${index + 1}
+
+            ${title}
+            - Page ${index + 1}
+
           </figcaption>
 
         </figure>
 
-      `
-    ).join("");
+      `;
+
+    }
+  );
 
 
-  /* =========================================
-     READER HTML
-  ========================================= */
+  /* =====================================
+     INLINE CONTENT
+  ===================================== */
 
-  reader.innerHTML = `
+  box.innerHTML = `
 
     <section
       class="panel"
       style="
-        margin:25px 0;
+        margin:18px 0 25px;
         padding:0;
         overflow:hidden;
       "
     >
+
 
       <div
         class="heading"
@@ -388,6 +468,7 @@ function openPost(slug) {
         <h1>
           ${title}
         </h1>
+
 
         <p>
 
@@ -418,9 +499,10 @@ function openPost(slug) {
         "
       >
 
+
         <div
           style="
-            margin-bottom:25px;
+            margin-bottom:22px;
             color:#91a5bd;
             font-size:13px;
             line-height:1.8;
@@ -428,16 +510,21 @@ function openPost(slug) {
         >
 
           <p>
+
             ${manga}
             ${chapter}
             の Raw をチェックできます。
+
           </p>
 
+
           <p>
+
             最新の漫画ページを画像で確認できます。
             このページでは
             ${title}
             の章情報と画像を掲載しています。
+
           </p>
 
         </div>
@@ -452,23 +539,17 @@ function openPost(slug) {
         <div
           style="
             text-align:center;
-            margin-top:30px;
+            margin-top:25px;
           "
         >
 
           <button
             type="button"
-            id="closeReader"
-            style="
-              padding:10px 22px;
-              border:1px solid #24415f;
-              border-radius:8px;
-              background:transparent;
-              color:#d6e4f3;
-              cursor:pointer;
-            "
+            class="close-inline-post"
           >
+
             ✕ 閉じる
+
           </button>
 
         </div>
@@ -481,20 +562,13 @@ function openPost(slug) {
   `;
 
 
-  /* =========================================
-     SHOW
-  ========================================= */
-
-  reader.style.display = "block";
-
-
-  /* =========================================
+  /* =====================================
      CLOSE BUTTON
-  ========================================= */
+  ===================================== */
 
   const closeButton =
-    document.querySelector(
-      "#closeReader"
+    box.querySelector(
+      ".close-inline-post"
     );
 
 
@@ -502,24 +576,41 @@ function openPost(slug) {
 
     closeButton.addEventListener(
       "click",
-      closePost
+      function (event) {
+
+        event.stopPropagation();
+
+        closePost(slug);
+
+      }
     );
 
   }
 
 
-  /* =========================================
-     SCROLL TO READER
-  ========================================= */
+  /* =====================================
+     SHOW
+  ===================================== */
 
-  setTimeout(() => {
+  box.style.display =
+    "block";
 
-    reader.scrollIntoView({
-      behavior: "smooth",
-      block: "start"
-    });
 
-  }, 100);
+  /* =====================================
+     SCROLL
+  ===================================== */
+
+  setTimeout(
+    () => {
+
+      box.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+
+    },
+    50
+  );
 
 }
 
@@ -528,24 +619,26 @@ function openPost(slug) {
    CLOSE POST
 ========================================= */
 
-function closePost() {
+function closePost(slug) {
 
-  const reader =
-    document.querySelector(
-      "#inlineReader"
+  const box =
+    document.getElementById(
+      "post-" + slug
     );
 
 
-  if (!reader) {
+  if (!box) {
+
     return;
+
   }
 
 
-  reader.style.display = "none";
+  box.style.display =
+    "none";
 
-  reader.innerHTML = "";
 
-  reader.removeAttribute("data-slug");
+  box.innerHTML = "";
 
 }
 
@@ -561,97 +654,106 @@ function renderRanking(list) {
 
 
   if (!rank) {
+
     return;
+
   }
 
 
   rank.innerHTML =
-
     list
       .slice(0, 5)
-      .map((p, i) => {
+      .map(
+        (post, index) => {
 
-        const slug =
-          String(p.slug || "");
-
-
-        return `
-
-          <div
-            class="rank"
-            data-slug="${esc(slug)}"
-            style="cursor:pointer"
-          >
-
-            <div class="num">
-              ${i + 1}
-            </div>
+          const slug =
+            String(
+              post.slug || ""
+            );
 
 
-            <div class="rcover">
+          return `
 
-              ${
-                p.cover
-                  ? `
-                    <img
-                      src="${esc(p.cover)}"
-                      alt="${esc(p.title)}"
-                      loading="lazy"
-                    >
-                  `
-                  : esc(
-                      p.manga ||
-                      p.title
-                    )
-              }
+            <div
+              class="rank"
+              data-slug="${esc(slug)}"
+              style="cursor:pointer"
+            >
 
-            </div>
-
-
-            <div>
-
-              <div class="rname">
-                ${esc(
-                  p.manga ||
-                  p.title
-                )}
+              <div class="num">
+                ${index + 1}
               </div>
 
 
-              <div class="rmeta">
+              <div class="rcover">
 
-                ★ ${esc(
-                  p.rating || ""
-                )}
+                ${
+                  post.cover
+                    ? `
+                      <img
+                        src="${esc(post.cover)}"
+                        alt="${esc(post.title)}"
+                        loading="lazy"
+                      >
+                    `
+                    : esc(
+                        post.manga ||
+                        post.title
+                      )
+                }
 
-                · ◉ ${esc(
-                  p.views || "0"
-                )}
+              </div>
+
+
+              <div>
+
+                <div class="rname">
+
+                  ${esc(
+                    post.manga ||
+                    post.title
+                  )}
+
+                </div>
+
+
+                <div class="rmeta">
+
+                  ★ ${esc(
+                    post.rating || ""
+                  )}
+
+                  · ◉ ${esc(
+                    post.views || "0"
+                  )}
+
+                </div>
 
               </div>
 
             </div>
 
-          </div>
+          `;
 
-        `;
-
-      })
+        }
+      )
       .join("");
 
 
-  /* Ranking click */
+  /* =====================================
+     RANKING CLICK EVENTS
+  ===================================== */
 
   rank
     .querySelectorAll(".rank")
-    .forEach(item => {
+    .forEach(element => {
 
-      item.addEventListener(
+      element.addEventListener(
         "click",
         function () {
 
           openPost(
-            this.dataset.slug
+            element.dataset.slug
           );
 
         }
@@ -674,35 +776,36 @@ if (searchInput) {
 
   searchInput.addEventListener(
     "input",
-    e => {
+    function (event) {
 
       const q =
-        e.target.value
+        event.target.value
           .toLowerCase()
           .trim();
 
 
-      render(
+      const filtered =
+        posts.filter(post => {
 
-        posts.filter(p =>
+          const text =
 
-          (
-            (p.title || "") +
+            (post.title || "") +
             " " +
-            (p.manga || "") +
+            (post.manga || "") +
             " " +
-            (p.chapter || "") +
+            (post.chapter || "") +
             " " +
-            (p.genre || "")
-          )
+            (post.genre || "");
 
-          .toLowerCase()
 
-          .includes(q)
+          return text
+            .toLowerCase()
+            .includes(q);
 
-        )
+        });
 
-      );
+
+      render(filtered);
 
     }
   );
@@ -715,17 +818,23 @@ if (searchInput) {
 ========================================= */
 
 document
-  .querySelectorAll(".tabs button")
+  .querySelectorAll(
+    ".tabs button"
+  )
   .forEach(button => {
 
     button.addEventListener(
       "click",
-      () => {
+      function () {
+
 
         document
-          .querySelectorAll(".tabs button")
-          .forEach(x =>
-            x.classList.remove("on")
+          .querySelectorAll(
+            ".tabs button"
+          )
+          .forEach(
+            x =>
+              x.classList.remove("on")
           );
 
 
@@ -736,18 +845,16 @@ document
           button.dataset.g;
 
 
-        render(
-
+        const filtered =
           genre === "all"
-
             ? posts
-
             : posts.filter(
-                p =>
-                  p.genre === genre
-              )
+                post =>
+                  post.genre === genre
+              );
 
-        );
+
+        render(filtered);
 
       }
     );
@@ -760,6 +867,3 @@ document
 ========================================= */
 
 load();
-console.log("SCRIPT V3 LOADED");
-console.log("Cards:", document.querySelectorAll(".card").length);
-console.log("Reader:", document.querySelector("#inlineReader"));
