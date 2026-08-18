@@ -1,6 +1,37 @@
 {
   "posts": [
     {
+      "slug": "kingdo-885",
+      "title": "キングダム Raw ( Kingdom Raw ) 第885話",
+      "manga": "Kingdo",
+      "chapter": "第885話",
+      "genre": "Action",
+      "rating": "9.0",
+      "views": "0",
+      "cover": "images/kingdo-885/cover.webp",
+      "images": [
+        "images/kingdo-885/page-01.jpg",
+        "images/kingdo-885/page-02.jpg",
+        "images/kingdo-885/page-03.jpg",
+        "images/kingdo-885/page-04.jpg",
+        "images/kingdo-885/page-05.jpg",
+        "images/kingdo-885/page-06.jpg",
+        "images/kingdo-885/page-07.jpg",
+        "images/kingdo-885/page-08.jpg",
+        "images/kingdo-885/page-09.jpg",
+        "images/kingdo-885/page-10.jpg",
+        "images/kingdo-885/page-11.jpg",
+        "images/kingdo-885/page-12.jpg",
+        "images/kingdo-885/page-13.jpg",
+        "images/kingdo-885/page-14.jpg",
+        "images/kingdo-885/page-15.jpg",
+        "images/kingdo-885/page-16.jpg",
+        "images/kingdo-885/page-17.jpg",
+        "images/kingdo-885/page-18.jpg",
+        "images/kingdo-885/page-19.jpg"
+      ]
+    },
+    {
       "slug": "blue-loc-357",
       "title": "ブルーロック Raw ( Blue Lock raw ) 第357話",
       "manga": "Blue Loc",
