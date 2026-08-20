@@ -166,15 +166,28 @@
     },
     {
       "slug": "kagurabachi-129",
-      "title": "カグラバチ Raw ( Kagurabachi Raw ) 第129話",
+      "title": "カグラバチ raw ( Kagurabachi Raw ) 第129話",
       "manga": "Kagurabachi",
-      "chapter": "第129話",
-      "genre": "Fantasy",
-      "rating": "7.0",
+      "chapter": "129",
+      "genre": "Action",
+      "rating": "9.0",
       "views": "0",
-      "cover": "images/kagurabachi-第129話/cover.webp",
+      "cover": "images/kagurabachi-129/cover.jpg",
       "images": [
-        "images/kagurabachi-第129話/page-01.webp"
+        "images/kagurabachi-129/page-01.jpg",
+        "images/kagurabachi-129/page-02.jpg",
+        "images/kagurabachi-129/page-03.jpg",
+        "images/kagurabachi-129/page-04.jpg",
+        "images/kagurabachi-129/page-05.jpg",
+        "images/kagurabachi-129/page-06.jpg",
+        "images/kagurabachi-129/page-07.jpg",
+        "images/kagurabachi-129/page-08.jpg",
+        "images/kagurabachi-129/page-09.jpg",
+        "images/kagurabachi-129/page-10.jpg",
+        "images/kagurabachi-129/page-11.jpg",
+        "images/kagurabachi-129/page-12.jpg",
+        "images/kagurabachi-129/page-13.jpg",
+        "images/kagurabachi-129/page-14.jpg"
       ]
     },
     {
